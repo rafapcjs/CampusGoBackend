@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
                 ),
                 @Server(
                         description = "Swagger UI - Campus GO (Producción)",
-                        url = "https://campusgobackend.onrender.com" // Producción
+                        url = "https://backendcampusgo-2.onrender.com" // Producción
                 )
         }
 )

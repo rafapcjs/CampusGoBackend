@@ -48,10 +48,7 @@ public class SecurityConfig {
                             ,"/"
                     ).permitAll();
                     // EndPoints Privados
-                    http.requestMatchers(HttpMethod.GET, "/method/get").hasAuthority("READ");
-                    http.requestMatchers(HttpMethod.POST, "/method/post").hasAuthority("CREATE");
-                    http.requestMatchers(HttpMethod.DELETE, "/method/delete").hasAuthority("DELETE");
-                    http.requestMatchers(HttpMethod.PUT, "/method/put").hasAuthority("UPDATE");
+
 // permisos de student
       http.requestMatchers(HttpMethod.PUT, "/api/v1/campus-go/students/update").hasRole("STUDENT");
       http.requestMatchers(HttpMethod.GET, "/api/v1/campus-go/students/me").hasRole("STUDENT");
