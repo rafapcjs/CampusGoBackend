@@ -12,14 +12,6 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * Configuración de Swagger/OpenAPI para la documentación de la API de Campus GO.
- *
- * <p>
- * Este archivo define la información general del proyecto, incluyendo el equipo de desarrollo,
- * los términos de uso, la universidad y los servidores disponibles.
- * </p>
- */
 @OpenAPIDefinition(
         info = @Info(
                 title = "Campus GO - API de Gestión Académica 📚",
@@ -38,8 +30,12 @@ import org.springframework.context.annotation.Configuration;
         ),
         servers = {
                 @Server(
-                        description = "Swagger UI - Campus GO",
-                        url = "http://localhost:8080"
+                        description = "Swagger UI - Campus GO (Local)",
+                        url = "http://localhost:8080" // Local
+                ),
+                @Server(
+                        description = "Swagger UI - Campus GO (Producción)",
+                        url = "https://campusgobackend.onrender.com" // Producción
                 )
         }
 )
