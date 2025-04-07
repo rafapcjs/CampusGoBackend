@@ -46,7 +46,7 @@ public class HomeController {
                     <div class="mt-6 space-y-4">
                         <a href="#" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">📌 Ver Notas</a>
                         <a href="#" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded ml-2">📋 Gestionar Estudiantes</a>
-                        <a href="https://backendcampusgo-2.onrender.com/swagger-ui/index.html" target="_blank" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded block mx-auto">📜 API Docs (Swagger)</a>
+                        <a href="https://campusgobackend.onrender.com/swagger-ui/index.html" target="_blank" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded block mx-auto">📜 API Docs (Swagger)</a>
                     </div>
                 </div>
 
