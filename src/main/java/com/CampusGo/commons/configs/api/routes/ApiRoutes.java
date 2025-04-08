@@ -16,8 +16,10 @@ public interface ApiRoutes {
     // 🎓 Rutas para estudiantes
     String STUDENT_BASE = BASE_API + "/students";
     String STUDENT_REGISTER = STUDENT_BASE + "/register";
+    String STUDENT_CHANGE_PASSWORD = STUDENT_BASE + "/change-password"; // 🔐 Cambiar contraseña estudiante
 
     // 👨‍🏫 Rutas para profesores
     String TEACHER_BASE = BASE_API + "/teachers";
     String TEACHER_REGISTER = TEACHER_BASE + "/register";
+    String TEACHER_CHANGE_PASSWORD = TEACHER_BASE + "/change-password"; // 🔐 Cambiar contraseña profesor
 }

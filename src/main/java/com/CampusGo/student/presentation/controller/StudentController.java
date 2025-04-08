@@ -1,8 +1,10 @@
 package com.CampusGo.student.presentation.controller;
 
-import com.CampusGo.commons.configs.api.routes.ApiRoutes;
 import com.CampusGo.security.presentation.dto.AuthResponseDto;
+import com.CampusGo.commons.helpers.payloads.ChangePasswordPayload;
+import com.CampusGo.student.presentation.dto.StudentSessionDto;
 import com.CampusGo.student.presentation.payload.StudentPayload;
+import com.CampusGo.student.presentation.payload.StudentUpdatePayload;
 import com.CampusGo.student.service.interfaces.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -17,8 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static com.CampusGo.commons.configs.api.routes.ApiRoutes.STUDENT_BASE;
-import static com.CampusGo.commons.configs.api.routes.ApiRoutes.STUDENT_REGISTER;
+import static com.CampusGo.commons.configs.api.routes.ApiRoutes.*;
 
 
 @Tag(name = "Estudiantes", description = "Operaciones relacionadas con la gestión de estudiantes")
@@ -53,7 +54,7 @@ public class StudentController {
             }
     )
     @PutMapping(STUDENT_BASE + "/update")
-    public ResponseEntity<AuthResponseDto> updateStudent(@Valid @RequestBody StudentPayload payload) throws URISyntaxException {
+    public ResponseEntity<AuthResponseDto> updateStudent(@Valid @RequestBody StudentUpdatePayload payload) throws URISyntaxException {
         AuthResponseDto response = studentService.updateStudent(payload);
         return ResponseEntity.noContent().build();
     }
@@ -69,8 +70,25 @@ public class StudentController {
             }
     )
     @GetMapping(STUDENT_BASE + "/me")
-    public ResponseEntity<StudentPayload> getCurrentStudent() {
-        StudentPayload student = studentService.getCurrentStudent();
+    public ResponseEntity<?> getCurrentStudent() {
+        StudentSessionDto student = studentService.getCurrentStudent();
         return ResponseEntity.ok(student);
     }
+    @Operation(
+            summary = "Cambiar contraseña del estudiante",
+            description = "Permite al estudiante autenticado actualizar su contraseña.",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "Contraseña actualizada exitosamente"),
+                    @ApiResponse(responseCode = "400", description = "Datos inválidos o contraseñas no coinciden", content = @Content),
+                    @ApiResponse(responseCode = "401", description = "No autorizado", content = @Content),
+                    @ApiResponse(responseCode = "409", description = "La contraseña actual no coincide", content = @Content),
+                    @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content)
+            }
+    )
+    @PutMapping(STUDENT_CHANGE_PASSWORD)
+    public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordPayload payload) {
+        studentService.updatePasswordStudent(payload);
+        return ResponseEntity.noContent().build();
+    }
+
 }

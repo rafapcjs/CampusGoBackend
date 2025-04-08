@@ -1,5 +1,6 @@
 package com.CampusGo.student.presentation.payload;
 
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -13,10 +14,17 @@ import lombok.*;
 @Builder
 public class StudentPayload {
 
-
         @NotBlank(message = "El nombre de usuario es obligatorio")
         @Size(min = 4, max = 20, message = "El nombre de usuario debe tener entre 4 y 20 caracteres")
         private String username;
+
+        @NotBlank(message = "El nombre es obligatorio")
+        @Size(min = 2, max = 30, message = "El nombre debe tener entre 2 y 30 caracteres")
+        private String name;
+
+        @NotBlank(message = "El apellido es obligatorio")
+        @Size(min = 2, max = 30, message = "El apellido debe tener entre 2 y 30 caracteres")
+        private String lastName;
 
         @NotBlank(message = "La contraseña es obligatoria")
         @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
@@ -35,8 +43,6 @@ public class StudentPayload {
         private String phone;
 
         @NotBlank(message = "El código del estudiante es obligatorio")
-    @Size(min = 5, max = 12, message = "El código del estudiante debe tener entre 5 y 12 caracteres")
-    private String studentCode;
-
-
+        @Size(min = 5, max = 12, message = "El código del estudiante debe tener entre 5 y 12 caracteres")
+        private String studentCode;
 }

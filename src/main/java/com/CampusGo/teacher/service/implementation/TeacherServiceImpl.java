@@ -1,7 +1,9 @@
 package com.CampusGo.teacher.service.implementation;
 
+import com.CampusGo.commons.configs.error.exceptions.AccessDeniedException;
 import com.CampusGo.commons.configs.error.exceptions.ConflictException;
 import com.CampusGo.commons.configs.error.exceptions.ResourceNotFoundException;
+import com.CampusGo.commons.helpers.payloads.ChangePasswordPayload;
 import com.CampusGo.security.persistence.entity.RoleEntity;
 import com.CampusGo.security.persistence.entity.RoleEnum;
 import com.CampusGo.security.persistence.entity.UserEntity;
@@ -15,8 +17,10 @@ import com.CampusGo.student.persistencie.repository.StudentRepository;
 import com.CampusGo.student.presentation.payload.StudentPayload;
 import com.CampusGo.teacher.persistencie.entity.Teacher;
 import com.CampusGo.teacher.persistencie.repository.TeacherRepository;
+import com.CampusGo.teacher.presentation.dto.TeacherSessionDto;
 import com.CampusGo.teacher.presentation.payload.TeacherPayload;
 
+import com.CampusGo.teacher.presentation.payload.TeacherUpdatePayload;
 import com.CampusGo.teacher.service.interfaces.TeacherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,6 +31,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+/**
+ * Service implementation for managing Teacher-related operations.
+ * This service provides methods for registering, updating, and retrieving teacher information.
+ * It implements the {@link TeacherService} interface.
+ *
+ * The service uses repositories to interact with the database for User, Teacher, and Role entities.
+ * Additionally, it handles password encoding and JWT token generation.
+ *
+ * The methods in this service are transactional to ensure data integrity and support rollback in case of errors.
+ */
 @Service
 @RequiredArgsConstructor
 public class TeacherServiceImpl implements TeacherService {
@@ -62,6 +76,8 @@ public class TeacherServiceImpl implements TeacherService {
         UserEntity user = UserEntity.builder()
                 .username(payload.getUsername())
                 .dni(payload.getDni())
+                .lastName(payload.getLastName())
+                .name(payload.getName())
                 .email(payload.getEmail())
                 .password(passwordEncoder.encode(payload.getPassword()))
                 .phone(payload.getPhone())
@@ -94,7 +110,7 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     @Transactional
-    public AuthResponseDto updateTeacher(TeacherPayload payload) {
+    public AuthResponseDto updateTeacher(TeacherUpdatePayload payload) {
         String currentUsername = SecurityUtils.getCurrentUsername();
 
         UserEntity user = userRepository.findUserEntityByUsername(currentUsername)
@@ -103,10 +119,7 @@ public class TeacherServiceImpl implements TeacherService {
         Teacher teacher = teacherRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Docente no encontrado."));
 
-        if (!user.getDni().equals(payload.getDni()) &&
-                userRepository.existsByDni(payload.getDni())) {
-            throw new ConflictException("El DNI ya está en uso.");
-        }
+
 
         if (!user.getEmail().equals(payload.getEmail()) &&
                 userRepository.existsByEmail(payload.getEmail())) {
@@ -119,13 +132,11 @@ public class TeacherServiceImpl implements TeacherService {
         }
 
         user.setUsername(payload.getUsername());
-        user.setDni(payload.getDni());
-        user.setEmail(payload.getEmail());
+        user.setName(payload.getName());
+        user.setLastName(payload.getLastName());
+         user.setEmail(payload.getEmail());
         user.setPhone(payload.getPhone());
 
-        if (!payload.getPassword().isBlank()) {
-            user.setPassword(passwordEncoder.encode(payload.getPassword()));
-        }
 
         userRepository.save(user);
 
@@ -142,7 +153,7 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     @Transactional(readOnly = true)
-    public TeacherPayload getCurrentTeacher() {
+    public TeacherSessionDto getCurrentTeacher() {
         String currentUsername = SecurityUtils.getCurrentUsername();
 
         UserEntity user = userRepository.findUserEntityByUsername(currentUsername)
@@ -151,12 +162,46 @@ public class TeacherServiceImpl implements TeacherService {
         Teacher teacher = teacherRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Docente no encontrado"));
 
-        return TeacherPayload.builder()
+        return TeacherSessionDto.builder()
                 .username(user.getUsername())
+                .lastName(user.getLastName())
+                .name(user.getName())
                 .email(user.getEmail())
                 .dni(user.getDni())
                 .teacherCode(teacher.getTeacherCode())
                 .phone(user.getPhone())
                 .build();
+    }
+
+    @Override
+    public void updatePasswordTeacher(ChangePasswordPayload payload) {   String currentUsername = SecurityUtils.getCurrentUsername();
+
+        // Buscar el usuario autenticado
+        UserEntity user = userRepository.findUserEntityByUsername(currentUsername)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado."));
+
+        // Verificar si tiene rol de profesor (opcional)
+        if (user.getTeacher() == null) {
+            throw new AccessDeniedException("El usuario no tiene perfil de profesor.");
+        }
+
+        // Validar contraseña actual
+        if (!passwordEncoder.matches(payload.getOldPassword(), user.getPassword())) {
+            throw new AccessDeniedException("La contraseña actual es incorrecta.");
+        }
+
+        // Validar que la nueva contraseña y la confirmación coincidan
+        if (!payload.getNewPassword().equals(payload.getConfirmNewPassword())) {
+            throw new ConflictException("La nueva contraseña y su confirmación no coinciden.");
+        }
+
+        // Validar que la nueva sea diferente
+        if (passwordEncoder.matches(payload.getNewPassword(), user.getPassword())) {
+            throw new ConflictException("La nueva contraseña no puede ser igual a la actual.");
+        }
+
+        // Cambiar contraseña
+        user.setPassword(passwordEncoder.encode(payload.getNewPassword()));
+        userRepository.save(user);
     }
 }

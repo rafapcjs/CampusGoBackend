@@ -19,6 +19,11 @@ import java.util.Set;
 public class UserEntity  extends BaseEntity {
 
     private String username;
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "last_name")
+    private String lastName;
 
     @Column(unique = true)
     private String dni;

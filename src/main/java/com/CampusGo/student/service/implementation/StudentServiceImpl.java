@@ -12,7 +12,10 @@ import com.CampusGo.security.util.JwtUtils;
 import com.CampusGo.security.util.SecurityUtils;
 import com.CampusGo.student.persistencie.entity.Student;
 import com.CampusGo.student.persistencie.repository.StudentRepository;
+import com.CampusGo.commons.helpers.payloads.ChangePasswordPayload;
+import com.CampusGo.student.presentation.dto.StudentSessionDto;
 import com.CampusGo.student.presentation.payload.StudentPayload;
+import com.CampusGo.student.presentation.payload.StudentUpdatePayload;
 import com.CampusGo.student.service.interfaces.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -43,9 +46,7 @@ public class StudentServiceImpl implements StudentService {
             throw new ConflictException("El nombre de usuario ya existe");
         }
 
-        if (userRepository.existsByDni(payload.getDni())) {
-            throw new ConflictException("El DNI ya está registrado");
-        }
+
 
         if (userRepository.existsByEmail(payload.getEmail())) {
             throw new ConflictException("El correo ya está registrado");
@@ -63,6 +64,8 @@ public class StudentServiceImpl implements StudentService {
         UserEntity user = UserEntity.builder()
                 .username(payload.getUsername())
                 .dni(payload.getDni())
+                .lastName(payload.getLastName())
+                .name(payload.getName())
                 .email(payload.getEmail())
                 .password(passwordEncoder.encode(payload.getPassword()))
                 .phone(payload.getPhone())
@@ -97,7 +100,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     @Transactional
-    public AuthResponseDto updateStudent(StudentPayload payload) {
+    public AuthResponseDto updateStudent(StudentUpdatePayload payload) {
         String currentUsername = SecurityUtils.getCurrentUsername();
 
         // Buscar el usuario autenticado
@@ -108,17 +111,13 @@ public class StudentServiceImpl implements StudentService {
         Student student = studentRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Estudiante no encontrado."));
 
-        // Verificar si los datos a actualizar ya existen para otro usuario
-        if (!user.getDni().equals(payload.getDni()) &&
-                userRepository.existsByDni(payload.getDni())) {
-            throw new ConflictException("El DNI ya está en uso.");
-        }
-
+        // Validar email duplicado
         if (!user.getEmail().equals(payload.getEmail()) &&
                 userRepository.existsByEmail(payload.getEmail())) {
             throw new ConflictException("El email ya está en uso.");
         }
 
+        // Validar teléfono duplicado
         if (!user.getPhone().equals(payload.getPhone()) &&
                 userRepository.existsByPhone(payload.getPhone())) {
             throw new ConflictException("El teléfono ya está en uso.");
@@ -126,14 +125,10 @@ public class StudentServiceImpl implements StudentService {
 
         // Actualizar los datos del usuario
         user.setUsername(payload.getUsername());
-        user.setDni(payload.getDni());
+        user.setName(payload.getName());
+        user.setLastName(payload.getLastName());
         user.setEmail(payload.getEmail());
         user.setPhone(payload.getPhone());
-
-        // Si la contraseña es diferente, actualizarla
-        if (!payload.getPassword().isBlank()) {
-            user.setPassword(passwordEncoder.encode(payload.getPassword()));
-        }
 
         userRepository.save(user);
 
@@ -151,7 +146,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     @Transactional
-    public StudentPayload getCurrentStudent() {
+    public StudentSessionDto getCurrentStudent() {
         String currentUsername = SecurityUtils.getCurrentUsername();
 
         UserEntity user = userRepository.findUserEntityByUsername(currentUsername)
@@ -160,13 +155,47 @@ public class StudentServiceImpl implements StudentService {
         Student student = studentRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Estudiante no encontrado"));
 
-        return StudentPayload.builder()
+        return StudentSessionDto.builder()
                 .username(user.getUsername())
                 .email(user.getEmail())
+                .lastName(user.getLastName())
+                .name(user.getName())
                 .dni(user.getDni())
                 .phone(user.getPhone())
                 .studentCode(student.getStudentCode())
                 .build();
     }
+
+
+    @Override
+    @Transactional
+    public void updatePasswordStudent(ChangePasswordPayload payload) {
+        // 1. Obtener el nombre de usuario autenticado
+        String currentUsername = SecurityUtils.getCurrentUsername();
+
+        // 2. Buscar el usuario por su nombre de usuario
+        UserEntity user = userRepository.findUserEntityByUsername(currentUsername)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado."));
+
+        // 3. Verificar que la contraseña actual sea correcta
+        if (!passwordEncoder.matches(payload.getOldPassword(), user.getPassword())) {
+            throw new ConflictException("La contraseña actual no es correcta.");
+        }
+
+        // 4. Validar que la nueva contraseña y su confirmación coincidan
+        if (!payload.getNewPassword().equals(payload.getConfirmNewPassword())) {
+            throw new ConflictException("La nueva contraseña y su confirmación no coinciden.");
+        }
+
+        // 5. Verificar que la nueva contraseña no sea igual a la actual
+        if (passwordEncoder.matches(payload.getNewPassword(), user.getPassword())) {
+            throw new ConflictException("La nueva contraseña no puede ser igual a la actual.");
+        }
+
+        // 6. Codificar y actualizar la nueva contraseña
+        user.setPassword(passwordEncoder.encode(payload.getNewPassword()));
+        userRepository.save(user);
+    }
+
 
 }

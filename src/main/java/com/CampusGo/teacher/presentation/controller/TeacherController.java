@@ -1,12 +1,16 @@
 package com.CampusGo.teacher.presentation.controller;
 
+ import com.CampusGo.commons.helpers.payloads.ChangePasswordPayload;
  import com.CampusGo.security.presentation.dto.AuthResponseDto;
-  import com.CampusGo.teacher.presentation.payload.TeacherPayload;
-import com.CampusGo.teacher.service.interfaces.TeacherService;
+ import com.CampusGo.teacher.presentation.dto.TeacherSessionDto;
+ import com.CampusGo.teacher.presentation.payload.TeacherPayload;
+ import com.CampusGo.teacher.presentation.payload.TeacherUpdatePayload;
+ import com.CampusGo.teacher.service.interfaces.TeacherService;
  import io.swagger.v3.oas.annotations.Operation;
  import io.swagger.v3.oas.annotations.media.Content;
  import io.swagger.v3.oas.annotations.media.Schema;
  import io.swagger.v3.oas.annotations.responses.ApiResponse;
+ import io.swagger.v3.oas.annotations.responses.ApiResponses;
  import io.swagger.v3.oas.annotations.tags.Tag;
  import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +54,7 @@ public class TeacherController {
             }
     )
     @PutMapping(TEACHER_BASE + "/update")
-    public ResponseEntity<AuthResponseDto> updateTeacher(@Valid @RequestBody TeacherPayload payload) throws URISyntaxException {
+    public ResponseEntity<AuthResponseDto> updateTeacher(@Valid @RequestBody TeacherUpdatePayload payload) throws URISyntaxException {
         AuthResponseDto response = teacherService.updateTeacher(payload);
         return ResponseEntity.noContent().build();
     }
@@ -66,8 +70,22 @@ public class TeacherController {
             }
     )
     @GetMapping(TEACHER_BASE + "/me")
-    public ResponseEntity<TeacherPayload> getCurrentTeacher() {
-        TeacherPayload teacher = teacherService.getCurrentTeacher();
+    public ResponseEntity<?> getCurrentTeacher() {
+        TeacherSessionDto teacher = teacherService.getCurrentTeacher();
         return ResponseEntity.ok(teacher);
+    }
+
+    @Operation(summary = "Actualizar contraseña del profesor")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Contraseña actualizada correctamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos en la solicitud"),
+            @ApiResponse(responseCode = "401", description = "No autorizado"),
+            @ApiResponse(responseCode = "403", description = "Acceso denegado"),
+            @ApiResponse(responseCode = "404", description = "Profesor no encontrado")
+    })
+    @PutMapping(TEACHER_CHANGE_PASSWORD)
+    public ResponseEntity<String> updatePassword(@Valid @RequestBody ChangePasswordPayload payload) {
+        teacherService.updatePasswordTeacher(payload);
+        return ResponseEntity.noContent().build();
     }
 }

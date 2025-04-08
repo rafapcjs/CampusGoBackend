@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,6 +14,14 @@ public class TeacherPayload {
 
         @NotBlank(message = "El nombre de usuario no puede estar vacío")
         private String username;
+
+        @NotBlank(message = "El nombre es obligatorio")
+        @Size(min = 2, max = 30, message = "El nombre debe tener entre 2 y 30 caracteres")
+        private String name;
+
+        @NotBlank(message = "El apellido es obligatorio")
+        @Size(min = 2, max = 30, message = "El apellido debe tener entre 2 y 30 caracteres")
+        private String lastName;
 
         @NotBlank(message = "La contraseña es obligatoria")
         @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")

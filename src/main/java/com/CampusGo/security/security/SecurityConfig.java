@@ -52,10 +52,13 @@ public class SecurityConfig {
 // permisos de student
       http.requestMatchers(HttpMethod.PUT, "/api/v1/campus-go/students/update").hasRole("STUDENT");
       http.requestMatchers(HttpMethod.GET, "/api/v1/campus-go/students/me").hasRole("STUDENT");
+      http.requestMatchers(HttpMethod.PUT,STUDENT_CHANGE_PASSWORD ).hasRole("STUDENT");
 
       // permiso de teeacher
       http.requestMatchers(HttpMethod.PUT, "api/v1/campus-go/teachers/update").hasRole("TEACHER");
-              http.requestMatchers(HttpMethod.GET, "api/v1/campus-go/teachers/me").hasRole("TEACHER");
+      http.requestMatchers(HttpMethod.GET, "api/v1/campus-go/teachers/me").hasRole("TEACHER");
+      http.requestMatchers(HttpMethod.PUT,TEACHER_CHANGE_PASSWORD ).hasRole("TEACHER");
+
                     http.anyRequest().denyAll();
                 })
                 .addFilterBefore(new JwtTokenValidator(jwtUtils), BasicAuthenticationFilter.class)
