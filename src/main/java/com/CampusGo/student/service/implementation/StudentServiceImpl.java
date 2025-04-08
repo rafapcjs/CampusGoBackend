@@ -1,5 +1,6 @@
 package com.CampusGo.student.service.implementation;
 
+import com.CampusGo.commons.configs.error.exceptions.AccessDeniedException;
 import com.CampusGo.commons.configs.error.exceptions.ConflictException;
 import com.CampusGo.commons.configs.error.exceptions.ResourceNotFoundException;
 import com.CampusGo.security.persistence.entity.RoleEntity;
@@ -45,7 +46,6 @@ public class StudentServiceImpl implements StudentService {
         if (userRepository.existsByUsername(payload.getUsername())) {
             throw new ConflictException("El nombre de usuario ya existe");
         }
-
 
 
         if (userRepository.existsByEmail(payload.getEmail())) {
@@ -166,7 +166,6 @@ public class StudentServiceImpl implements StudentService {
                 .build();
     }
 
-
     @Override
     @Transactional
     public void updatePasswordStudent(ChangePasswordPayload payload) {
@@ -177,25 +176,28 @@ public class StudentServiceImpl implements StudentService {
         UserEntity user = userRepository.findUserEntityByUsername(currentUsername)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado."));
 
-        // 3. Verificar que la contraseña actual sea correcta
-        if (!passwordEncoder.matches(payload.getOldPassword(), user.getPassword())) {
-            throw new ConflictException("La contraseña actual no es correcta.");
+        // 3. Verificar si el usuario tiene perfil de estudiante
+        if (user.getStudent() == null) {
+            throw new AccessDeniedException("El usuario no tiene perfil de estudiante.");
         }
 
-        // 4. Validar que la nueva contraseña y su confirmación coincidan
+        // 4. Validar que la contraseña actual sea correcta
+        if (!passwordEncoder.matches(payload.getOldPassword(), user.getPassword())) {
+            throw new AccessDeniedException("La contraseña actual es incorrecta.");
+        }
+
+        // 5. Validar que la nueva contraseña y su confirmación coincidan
         if (!payload.getNewPassword().equals(payload.getConfirmNewPassword())) {
             throw new ConflictException("La nueva contraseña y su confirmación no coinciden.");
         }
 
-        // 5. Verificar que la nueva contraseña no sea igual a la actual
+        // 6. Verificar que la nueva contraseña no sea igual a la actual
         if (passwordEncoder.matches(payload.getNewPassword(), user.getPassword())) {
             throw new ConflictException("La nueva contraseña no puede ser igual a la actual.");
         }
 
-        // 6. Codificar y actualizar la nueva contraseña
+        // 7. Codificar y actualizar la nueva contraseña
         user.setPassword(passwordEncoder.encode(payload.getNewPassword()));
         userRepository.save(user);
     }
-
-
 }
