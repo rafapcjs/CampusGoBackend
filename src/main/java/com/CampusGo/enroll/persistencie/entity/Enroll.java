@@ -1,20 +1,18 @@
-package com.CampusGo.academicPeriod.persistencie.entity;
+package com.CampusGo.enroll.persistencie.entity;
 
-import com.CampusGo.subject.persistencie.entity.Subject;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "ACADEMIC")
-public class Academic {
-
+@Table(name = "ENROLL")
+public class Enroll {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,12 +22,11 @@ public class Academic {
     private Integer code;
 
     @Column(nullable = false)
-    private Integer nSemestre;
+    private LocalDateTime fechaRegistra;
 
     @Column(nullable = false)
-    private Integer anio;
+    private Integer codEstudianteFk;
 
-    @OneToMany(mappedBy = "academic")
-    private List<Subject> subjects;
-
+    @Column(nullable = false)
+    private Integer codAsignatureFk;
 }
