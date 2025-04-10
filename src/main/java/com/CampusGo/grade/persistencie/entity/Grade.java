@@ -1,5 +1,6 @@
 package com.CampusGo.grade.persistencie.entity;
 
+import com.CampusGo.subject.persistencie.entity.Subject;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,11 +20,12 @@ public class Grade {
     @Column(unique = true, nullable = false)
     private Integer code;
 
-    @Column
-    private Integer codAsignatureFk;
+    @ManyToOne
+    @JoinColumn(name = "codAsignatureFk", referencedColumnName = "code", nullable = false)
+    private Subject subject;
 
     @Column(nullable = false)
-    private Integer codEstudianteFk;
+    private Long codEstudianteFk;
 
     @Column
     private float corte1;

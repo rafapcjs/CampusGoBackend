@@ -1,6 +1,7 @@
 package com.CampusGo.subject.persistencie.entity;
 
 import com.CampusGo.academicPeriod.persistencie.entity.Academic;
+import com.CampusGo.grade.persistencie.entity.Grade;
 import com.CampusGo.schelude.persistencie.entity.Schelude;
 import com.CampusGo.teacher.persistencie.entity.Teacher;
 import jakarta.persistence.*;
@@ -42,5 +43,8 @@ public class Subject {
 
     @OneToMany(mappedBy = "subject")
     private List<Schelude> scheludes;
+
+    @OneToMany(mappedBy = "subject")
+    private List<Grade> grades;
 
 }
