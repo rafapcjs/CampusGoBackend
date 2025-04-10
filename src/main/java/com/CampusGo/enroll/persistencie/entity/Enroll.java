@@ -1,5 +1,7 @@
 package com.CampusGo.enroll.persistencie.entity;
 
+import com.CampusGo.student.persistencie.entity.Student;
+import com.CampusGo.subject.persistencie.entity.Subject;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,9 +26,11 @@ public class Enroll {
     @Column(nullable = false)
     private LocalDateTime fechaRegistra;
 
-    @Column(nullable = false)
-    private Integer codEstudianteFk;
+    @ManyToOne
+    @JoinColumn(name = "codEstudianteFk",nullable = false)
+    private Student student;
 
-    @Column(nullable = false)
-    private Integer codAsignatureFk;
+    @ManyToOne
+    @JoinColumn(name = "codAsignatureFk",referencedColumnName = "code",nullable = false)
+    private Subject subject;
 }
