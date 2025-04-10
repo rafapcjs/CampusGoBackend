@@ -1,5 +1,6 @@
 package com.CampusGo.grade.persistencie.entity;
 
+import com.CampusGo.student.persistencie.entity.Student;
 import com.CampusGo.subject.persistencie.entity.Subject;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,8 +25,9 @@ public class Grade {
     @JoinColumn(name = "codAsignatureFk", referencedColumnName = "code", nullable = false)
     private Subject subject;
 
-    @Column(nullable = false)
-    private Long codEstudianteFk;
+    @ManyToOne
+    @JoinColumn(name = "codEstudianteFk", nullable = false)
+    private Student student;
 
     @Column
     private float corte1;
