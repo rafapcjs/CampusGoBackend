@@ -2,6 +2,7 @@ package com.CampusGo.subject.persistencie.entity;
 
 import com.CampusGo.academicPeriod.persistencie.entity.Academic;
 import com.CampusGo.schelude.persistencie.entity.Schelude;
+import com.CampusGo.teacher.persistencie.entity.Teacher;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,7 +19,7 @@ public class Subject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private Long id;
 
     @Column(unique = true, nullable = false)
     private Integer code;
@@ -30,8 +31,9 @@ public class Subject {
     private Integer codePeriodoAca;
 
 
-    @Column(nullable = false)
-    private Integer codeProfeAsignado;
+    @ManyToOne
+    @JoinColumn(name = "codeProfeAsignado", nullable = false)
+    private Teacher teacher;
 
     @ManyToOne
     @JoinColumn(name = "codePeriodoAca", referencedColumnName = "code")
