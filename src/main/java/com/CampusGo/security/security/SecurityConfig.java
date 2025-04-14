@@ -59,6 +59,11 @@ public class SecurityConfig {
       http.requestMatchers(HttpMethod.GET, "api/v1/campus-go/teachers/me").hasRole("TEACHER");
       http.requestMatchers(HttpMethod.PUT,TEACHER_CHANGE_PASSWORD ).hasRole("TEACHER");
 
+      // permisos de teacher en la clase Academic
+      http.requestMatchers(HttpMethod.GET,ACADEMIC_LIST ).hasRole("TEACHER");
+      http.requestMatchers(HttpMethod.POST,ACADEMIC_REGISTER ).hasRole("TEACHER");
+      http.requestMatchers(HttpMethod.PUT,ACADEMIC_UPDATE ).hasRole("TEACHER");
+
                     http.anyRequest().denyAll();
                 })
                 .addFilterBefore(new JwtTokenValidator(jwtUtils), BasicAuthenticationFilter.class)

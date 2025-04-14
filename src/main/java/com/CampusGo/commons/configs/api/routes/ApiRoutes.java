@@ -22,4 +22,11 @@ public interface ApiRoutes {
     String TEACHER_BASE = BASE_API + "/teachers";
     String TEACHER_REGISTER = TEACHER_BASE + "/register";
     String TEACHER_CHANGE_PASSWORD = TEACHER_BASE + "/change-password"; // 🔐 Cambiar contraseña profesor
+
+    // 👨‍🏫 Rutas para periodos academicos
+    String ACADEMIC_BASE = BASE_API + "/academic";
+    String ACADEMIC_LIST = ACADEMIC_BASE + "/getAllAcademic";
+    String ACADEMIC_REGISTER = ACADEMIC_BASE + "/registerAcademic";
+    String ACADEMIC_UPDATE = ACADEMIC_BASE + "/updateAcademic";
+
 }

@@ -1,33 +1,21 @@
 package com.CampusGo.academicPeriod.service.interfaces;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.CampusGo.academicPeriod.presentation.dto.AcademicResponseDto;
+import com.CampusGo.academicPeriod.presentation.payload.CreateAcademicRequest;
+import com.CampusGo.academicPeriod.presentation.payload.UpdateAcademicRequest;
 
-@Entity
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Table(name = "ACADEMIC")
+import java.util.List;
+
 public class AcademicService {
+    public List<AcademicResponseDto> getAllAcademicPeriods() {
+        return null;
+    }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    public AcademicResponseDto createAcademicPeriod(CreateAcademicRequest request) {
+        return null;
+    }
 
-    @Column(unique = true, nullable = false)
-    private Integer code;
-
-    @Column(length = 10)
-    private String nSemestre;
-
-    @Column(unique = true, nullable = false)
-    private Integer anio;
-
-
-
-
-
-
+    public AcademicResponseDto updateAcademicPeriod(UpdateAcademicRequest request) {
+        return null;
+    }
 }
