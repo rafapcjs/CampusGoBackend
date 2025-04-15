@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,12 +23,13 @@ public class AcademicController {
     @Autowired
     private AcademicService academicService;
 
+
     @Operation(
             summary = "Lista periodos academicos",
             description = "Lista todos los periodos academicos eexistentes."
     )
     @GetMapping(ACADEMIC_LIST)
-    public List<AcademicResponseDto> getAllAcademicPeriods() {
+    public ResponseEntity<?> getAllAcademicPeriods() {
         return academicService.getAllAcademicPeriods();
     }
 
