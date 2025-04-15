@@ -29,4 +29,16 @@ public interface ApiRoutes {
     String ACADEMIC_REGISTER = ACADEMIC_BASE + "/registerAcademic";
     String ACADEMIC_UPDATE = ACADEMIC_BASE + "/updateAcademic";
 
+
+    // ruta para subjetct
+
+    String SUBJECT_BASE = BASE_API + "/subjects";
+    String SUBJECT_SEARCH_CODE= SUBJECT_BASE + "/searchCodeSubject";
+    String SUBJECT_REGISTER = SUBJECT_BASE + "/registerSubject";
+    String SUBJECT_SEARCH_NAME= SUBJECT_BASE + "/searchNameSubject";
+    String SUBJECT_UPDATE = SUBJECT_BASE + "/updateSubject";
+    String SUBJECT_LIST_BY_ORDER_CODE = ACADEMIC_BASE + "/getAllOrderCodeSubject";
+    String SUBJECT_LIST_BY_ORDER_NAME = ACADEMIC_BASE + "/getAllOrderNameSubject";
+
+
 }

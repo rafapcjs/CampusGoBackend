@@ -10,6 +10,6 @@ import java.util.Optional;
 public interface AcademicRepository extends JpaRepository<Academic, Integer> {
 
     // Método para buscar un periodo académico por su code (único)
-    Academic findByCode(Integer code);
+    Optional<Academic> findByCode(Integer code);
 
 }

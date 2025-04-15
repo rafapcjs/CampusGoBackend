@@ -6,6 +6,7 @@ import com.CampusGo.academicPeriod.presentation.dto.AcademicResponseDto;
 import com.CampusGo.academicPeriod.presentation.payload.CreateAcademicRequest;
 import com.CampusGo.academicPeriod.presentation.payload.UpdateAcademicRequest;
 import com.CampusGo.academicPeriod.service.interfaces.AcademicService;
+import com.CampusGo.commons.configs.error.exceptions.ResourceNotFoundException;
 import com.CampusGo.commons.configs.message.InfoMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,6 @@ public class AcademicServiceImpl implements AcademicService {
 
     @Autowired
     private AcademicRepository academicRepository;
-
 
 
     public ResponseEntity<?> getAllAcademicPeriods() {
@@ -61,15 +61,21 @@ public class AcademicServiceImpl implements AcademicService {
 
 
     public AcademicResponseDto updateAcademicPeriod(UpdateAcademicRequest request) {
-        Academic academic = academicRepository.findByCode(request.getCode());
-        if (academic == null) {
-            throw new RuntimeException("Academic period with code " + request.getCode() + " not found");
-        }
+        // Buscar el periodo académico por código, usando Optional
+        Optional<Academic> optionalAcademic = academicRepository.findByCode(request.getCode());
 
+        // Verificar si no se encuentra el periodo académico
+        Academic academic = optionalAcademic.orElseThrow(() ->
+                new ResourceNotFoundException("Academic period with code " + request.getCode() + " not found"));
+
+        // Actualizar los datos del periodo académico
         academic.setNSemestre(request.getNSemestre());
         academic.setAnio(request.getAnio());
 
-        Academic updated = academicRepository.save(academic);
-        return new AcademicResponseDto(updated.getCode(), updated.getNSemestre(), updated.getAnio());
+        // Guardar los cambios en la base de datos
+        Academic updatedAcademic = academicRepository.save(academic);
+
+        // Crear y retornar la respuesta con la información actualizada
+        return new AcademicResponseDto(updatedAcademic.getCode(), updatedAcademic.getNSemestre(), updatedAcademic.getAnio());
     }
 }

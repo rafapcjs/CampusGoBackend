@@ -64,6 +64,19 @@ public class SecurityConfig {
       http.requestMatchers(HttpMethod.POST,ACADEMIC_REGISTER ).hasRole("TEACHER");
       http.requestMatchers(HttpMethod.PUT,ACADEMIC_UPDATE ).hasRole("TEACHER");
 
+
+      // permisos para materias teacher
+                    http.requestMatchers(HttpMethod.GET, SUBJECT_SEARCH_NAME + "/**").hasRole("TEACHER");
+                    http.requestMatchers(HttpMethod.GET,SUBJECT_LIST_BY_ORDER_NAME ).hasRole("TEACHER");
+                    http.requestMatchers(HttpMethod.GET,SUBJECT_LIST_BY_ORDER_CODE ).hasRole("TEACHER");
+
+                    http.requestMatchers(HttpMethod.POST,SUBJECT_REGISTER ).hasRole("TEACHER");
+                    http.requestMatchers(HttpMethod.GET, SUBJECT_SEARCH_NAME + "/**").hasRole("TEACHER");
+                    http.requestMatchers(HttpMethod.GET, SUBJECT_SEARCH_CODE + "/**").hasRole("TEACHER");
+                    http.requestMatchers(HttpMethod.PUT, SUBJECT_UPDATE + "/**").hasRole("TEACHER");
+
+
+
                     http.anyRequest().denyAll();
                 })
                 .addFilterBefore(new JwtTokenValidator(jwtUtils), BasicAuthenticationFilter.class)
