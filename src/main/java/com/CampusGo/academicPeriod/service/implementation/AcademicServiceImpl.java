@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class AcademicServiceImpl extends AcademicService {
+public class AcademicServiceImpl implements AcademicService {
 
     @Autowired
     private AcademicRepository academicRepository;

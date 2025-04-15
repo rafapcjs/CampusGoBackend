@@ -6,16 +6,8 @@ import com.CampusGo.academicPeriod.presentation.payload.UpdateAcademicRequest;
 
 import java.util.List;
 
-public class AcademicService {
-    public List<AcademicResponseDto> getAllAcademicPeriods() {
-        return null;
-    }
-
-    public AcademicResponseDto createAcademicPeriod(CreateAcademicRequest request) {
-        return null;
-    }
-
-    public AcademicResponseDto updateAcademicPeriod(UpdateAcademicRequest request) {
-        return null;
-    }
+public interface AcademicService {
+    List<AcademicResponseDto> getAllAcademicPeriods();
+    AcademicResponseDto createAcademicPeriod(CreateAcademicRequest request);
+    AcademicResponseDto updateAcademicPeriod(UpdateAcademicRequest request);
 }
