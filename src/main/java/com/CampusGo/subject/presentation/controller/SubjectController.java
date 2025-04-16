@@ -125,7 +125,7 @@ public class SubjectController {
     @PutMapping(SUBJECT_UPDATE + "/{codeSubject}")
     public ResponseEntity<Void> updateTeacherInSubject(
             @Parameter(description = "Código de la asignatura a actualizar") @PathVariable Integer codeSubject,
-            @Parameter(description = "Código del nuevo profesor a asignar") @RequestBody UpdateSubjectRequest request) {
+            @Parameter(description = "Informacion a actualizar en caso que decida o solo profesor") @RequestBody UpdateSubjectRequest request) {
 
         subjectService.updateSubjectByCodeTeacher(codeSubject, request);
         return ResponseEntity.noContent().build(); // 204 No Content
