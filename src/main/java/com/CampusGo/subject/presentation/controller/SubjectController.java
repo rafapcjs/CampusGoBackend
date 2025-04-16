@@ -1,9 +1,9 @@
 package com.CampusGo.subject.presentation.controller;
 
-import com.CampusGo.commons.configs.api.routes.ApiRoutes;
 import com.CampusGo.commons.helpers.pageable.PageableUtil;
 import com.CampusGo.subject.presentation.dto.SubjectDetailsResponseDto;
 import com.CampusGo.subject.presentation.payload.CreateSubjectRequest;
+import com.CampusGo.subject.presentation.payload.UpdateSubjectRequest;
 import com.CampusGo.subject.service.interfaces.SubjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -125,9 +125,9 @@ public class SubjectController {
     @PutMapping(SUBJECT_UPDATE + "/{codeSubject}")
     public ResponseEntity<Void> updateTeacherInSubject(
             @Parameter(description = "Código de la asignatura a actualizar") @PathVariable Integer codeSubject,
-            @Parameter(description = "Código del nuevo profesor a asignar") @RequestParam String codeTeacher) {
+            @Parameter(description = "Código del nuevo profesor a asignar") @RequestBody UpdateSubjectRequest request) {
 
-        subjectService.updateSubjectByCodeTeacher(codeSubject, codeTeacher);
+        subjectService.updateSubjectByCodeTeacher(codeSubject, request);
         return ResponseEntity.noContent().build(); // 204 No Content
     }
 

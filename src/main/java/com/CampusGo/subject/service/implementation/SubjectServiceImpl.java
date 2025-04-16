@@ -7,6 +7,7 @@ import com.CampusGo.subject.persistencie.entity.Subject;
 import com.CampusGo.subject.persistencie.repository.SubjectRepository;
 import com.CampusGo.subject.presentation.dto.SubjectDetailsResponseDto;
 import com.CampusGo.subject.presentation.payload.CreateSubjectRequest;
+import com.CampusGo.subject.presentation.payload.UpdateSubjectRequest;
 import com.CampusGo.subject.service.interfaces.SubjectService;
 import com.CampusGo.teacher.persistencie.entity.Teacher;
 import com.CampusGo.teacher.persistencie.repository.TeacherRepository;
@@ -77,20 +78,24 @@ public class SubjectServiceImpl  implements SubjectService {
         return subjectRepository.findSubjectDetailsByCode(code)
                 .orElseThrow(() -> new ResourceNotFoundException("Subject with code " + code + " not found"));
     }
+
     @Override
     @Transactional
-    public void updateSubjectByCodeTeacher(Integer codeSubject, String codeTeacher) {
+    public void updateSubjectByCodeTeacher(Integer codeSubject, UpdateSubjectRequest request) {
         Subject subject = subjectRepository.findByCode(codeSubject)
                 .orElseThrow(() -> new ResourceNotFoundException("Subject with code " + codeSubject + " not found"));
 
-        Teacher teacher = teacherRepository.findByTeacherCode(codeTeacher)
-                .orElseThrow(() -> new ResourceNotFoundException("Teacher with code " + codeTeacher + " not found"));
+        Teacher teacher = teacherRepository.findByTeacherCode(request.getCodeTeacher())
+                .orElseThrow(() -> new ResourceNotFoundException("Teacher with code " + request.getCodeTeacher() + " not found"));
 
+        Academic academic = academicRepository.findByCode(request.getCodePeriodoAca())
+                .orElseThrow(() -> new ResourceNotFoundException("Academic with code " + request.getCodePeriodoAca() + " not found"));
+
+        subject.setName(request.getName());
+        subject.setAcademic(academic);
         subject.setTeacher(teacher);
+
     }
-
-
-
     private Integer generateRandomCode() {
         // Genera un código aleatorio entre 100000 y 999999
         int randomCode = (int) (Math.random() * 900000) + 100000;
