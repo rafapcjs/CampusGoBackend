@@ -115,8 +115,7 @@ public class SubjectController {
     }
 
     @Operation(summary = "Actualizar el profesor asignado a una asignatura",
-            description = "Permite actualizar el profesor asignado a una asignatura específica mediante su código.",
-            tags = {"Subjects"})
+            description = "Permite actualizar el profesor asignado a una asignatura específica mediante su código.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Actualización exitosa. El profesor ha sido asignado correctamente."),
             @ApiResponse(responseCode = "404", description = "Asignatura o profesor no encontrados."),
