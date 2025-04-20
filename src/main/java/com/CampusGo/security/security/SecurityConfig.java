@@ -53,6 +53,8 @@ public class SecurityConfig {
       http.requestMatchers(HttpMethod.PUT, "/api/v1/campus-go/students/update").hasRole("STUDENT");
       http.requestMatchers(HttpMethod.GET, "/api/v1/campus-go/students/me").hasRole("STUDENT");
       http.requestMatchers(HttpMethod.PUT,STUDENT_CHANGE_PASSWORD ).hasRole("STUDENT");
+      http.requestMatchers(HttpMethod.GET,SCHELUDE_LIST_BY_STUDENT ).hasRole("STUDENT");
+
 
       // permiso de teeacher
       http.requestMatchers(HttpMethod.PUT, "api/v1/campus-go/teachers/update").hasRole("TEACHER");

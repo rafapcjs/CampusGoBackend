@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.CampusGo.commons.configs.api.routes.ApiRoutes.SCHELUDE_LIST_ORDER;
-import static com.CampusGo.commons.configs.api.routes.ApiRoutes.SCHELUDE_REGISTER;
+import static com.CampusGo.commons.configs.api.routes.ApiRoutes.*;
 
 @Tag(name = "Horarios", description = "Operaciones relacionadas con la gestión de horarios")
 @RestController
@@ -44,6 +43,20 @@ public class ScheludeController {
     @GetMapping(SCHELUDE_LIST_ORDER)
     public ResponseEntity<List<ListOrderScheludeDTO>> listAllOrderSchelude() {
         return ResponseEntity.ok(scheludeService.listAllOrderSchelude());
+    }
+
+
+    // Controlador para listar los horarios de un estudiante por su ID
+    @Operation(
+            summary = "Listar horarios por estudiante",
+            description = "Lista todos los horarios existentes para un estudiante ordenados por día."
+    )
+    @GetMapping(SCHELUDE_LIST_BY_STUDENT)
+    public ResponseEntity<List<ListOrderScheludeDTO>> getScheludeByStudent(
+            @RequestParam Integer studentId
+    ) {
+        List<ListOrderScheludeDTO> result = scheludeService.getOrderedScheludeByStudent(studentId);
+        return ResponseEntity.ok(result);
     }
 
 

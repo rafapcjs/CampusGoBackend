@@ -10,5 +10,6 @@ public interface ScheludeService {
 
     ScheludeResponseDTO createSchelude(CreateScheludeRequest request);
     List<ListOrderScheludeDTO> listAllOrderSchelude();
+    List<ListOrderScheludeDTO> getOrderedScheludeByStudent(Integer studentId);
 
 }

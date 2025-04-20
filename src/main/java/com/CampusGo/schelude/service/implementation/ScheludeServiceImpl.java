@@ -1,6 +1,7 @@
 package com.CampusGo.schelude.service.implementation;
 
 import com.CampusGo.commons.configs.error.exceptions.ConflictException;
+import com.CampusGo.commons.configs.error.exceptions.ResourceNotFoundException;
 import com.CampusGo.schelude.persistencie.entity.Schelude;
 import com.CampusGo.schelude.persistencie.repository.ScheludeRepository;
 import com.CampusGo.schelude.presentation.dto.ListOrderScheludeDTO;
@@ -109,6 +110,28 @@ public class ScheludeServiceImpl implements ScheludeService {
                 (String) obj[4],
                 (String) obj[5],
                 (String) obj[6]
+        )).toList();
+    }
+
+
+    // Metodo para listar horarios de un estudiante por su ID
+
+    @Override
+    public List<ListOrderScheludeDTO> getOrderedScheludeByStudent(Integer studentId) {
+        List<Object[]> rawResult = repository.findScheludeOrderedByDayForStudent(studentId);
+
+        if (rawResult.isEmpty()) {
+            throw new ResourceNotFoundException("No se encontraron horarios para el estudiante con ID: " + studentId);
+        }
+
+        return rawResult.stream().map(obj -> new ListOrderScheludeDTO(
+                (Integer) obj[0],     // code
+                (Integer) obj[1],     // codeSubject
+                (String) obj[2],      // name
+                (String) obj[3],      // dia
+                (String) obj[4],      // horaInicial
+                (String) obj[5],      // horaFinal
+                (String) obj[6]       // nameTeacher
         )).toList();
     }
 
