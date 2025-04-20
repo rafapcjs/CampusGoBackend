@@ -16,4 +16,32 @@ public interface ScheludeRepository extends JpaRepository<Schelude, Integer> {
 
     @Query("SELECT MAX(s.code) FROM Schelude s")
     Integer findMaxCode();
+
+    // Query personalizada para listar los horarios por dia de forma general
+    @Query(value = """
+        SELECT
+            scl.code,
+            s2.code AS codeSubject,
+            s2.name,
+            CASE 
+                WHEN scl.dia = 0 THEN 'Domingo'
+                WHEN scl.dia = 1 THEN 'Lunes'
+                WHEN scl.dia = 2 THEN 'Martes'
+                WHEN scl.dia = 3 THEN 'Miércoles'
+                WHEN scl.dia = 4 THEN 'Jueves'
+                WHEN scl.dia = 5 THEN 'Viernes'
+                WHEN scl.dia = 6 THEN 'Sábado'
+            END AS dia,
+            scl.hora_inicial,
+            scl.hora_final,
+            UPPER(u.name || ' ' || u.last_name) AS nameTeacher
+        FROM
+            schelude scl
+        JOIN subject s2 ON scl.code_asignature_fk = s2.code
+        JOIN enroll erl ON erl.cod_asignature_fk = s2.code
+        JOIN users u ON s2.code_profe_asignado = u.id
+        ORDER BY scl.dia ASC
+        """, nativeQuery = true)
+    List<Object[]> findAllOrderedSchedulesRaw();
+
 }

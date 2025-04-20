@@ -3,6 +3,7 @@ package com.CampusGo.schelude.service.implementation;
 import com.CampusGo.commons.configs.error.exceptions.ConflictException;
 import com.CampusGo.schelude.persistencie.entity.Schelude;
 import com.CampusGo.schelude.persistencie.repository.ScheludeRepository;
+import com.CampusGo.schelude.presentation.dto.ListOrderScheludeDTO;
 import com.CampusGo.schelude.presentation.dto.ScheludeResponseDTO;
 import com.CampusGo.schelude.presentation.payload.CreateScheludeRequest;
 import com.CampusGo.schelude.service.interfaces.ScheludeService;
@@ -21,6 +22,9 @@ public class ScheludeServiceImpl implements ScheludeService {
 
     private final ScheludeRepository repository;
     private final SubjectRepository subjectRepository;  // Añadido para obtener el Subject por código
+
+
+    // Metodo para crear un horario
 
     @Override
     public ScheludeResponseDTO createSchelude(CreateScheludeRequest request) {
@@ -85,4 +89,28 @@ public class ScheludeServiceImpl implements ScheludeService {
             throw new ConflictException("Formato de hora no válido. Utilice el formato 24h (HH:mm).");
         }
     }
+
+
+    // Metodo para listar horarios en orden ascendente por el dia
+
+    @Override
+    public List<ListOrderScheludeDTO> listAllOrderSchelude() {
+        List<Object[]> rawResults = repository.findAllOrderedSchedulesRaw();
+
+        if (rawResults.isEmpty()) {
+            throw new ConflictException("No hay horarios registrados.");
+        }
+
+        return rawResults.stream().map(obj -> new ListOrderScheludeDTO(
+                (Integer) obj[0],
+                (Integer) obj[1],
+                (String) obj[2],
+                (String) obj[3],
+                (String) obj[4],
+                (String) obj[5],
+                (String) obj[6]
+        )).toList();
+    }
+
+
 }

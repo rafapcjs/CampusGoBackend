@@ -66,6 +66,7 @@ public class SecurityConfig {
 
       // permisos de teacher en la clase Schelude
       http.requestMatchers(HttpMethod.POST,SCHELUDE_REGISTER ).hasRole("TEACHER");
+      http.requestMatchers(HttpMethod.GET,SCHELUDE_LIST_ORDER ).hasRole("TEACHER");
 
 
 
