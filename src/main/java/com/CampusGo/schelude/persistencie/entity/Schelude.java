@@ -20,16 +20,16 @@ public class Schelude {
     @Column(unique = true, nullable = false)
     private Integer code;
 
-    @Column(name = "codeAsignatureFk", insertable = false, updatable = false)
+    @Column(name = "codeAsignatureFk", insertable = false, updatable = false, nullable = false)
     private Integer codeAsignatureFk;
 
-    @Column(length = 10)
-    private String dia;
+    @Column
+    private Integer dia;
 
-    @Column(length = 5)
+    @Column(length = 8)
     private String horaInicial;
 
-    @Column(length = 5)
+    @Column(length = 8)
     private String horaFinal;
 
 

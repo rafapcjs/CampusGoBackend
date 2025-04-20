@@ -40,5 +40,9 @@ public interface ApiRoutes {
     String SUBJECT_LIST_BY_ORDER_CODE = ACADEMIC_BASE + "/getAllOrderCodeSubject";
     String SUBJECT_LIST_BY_ORDER_NAME = ACADEMIC_BASE + "/getAllOrderNameSubject";
 
+    // ruta para schelude
+
+    String SCHELUDE_BASE = BASE_API + "/schelude";
+    String SCHELUDE_REGISTER = SCHELUDE_BASE + "/registerSchelude";
 
 }

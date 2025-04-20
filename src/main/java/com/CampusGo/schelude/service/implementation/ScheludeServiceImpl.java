@@ -1,4 +1,88 @@
 package com.CampusGo.schelude.service.implementation;
 
-public class ScheludeServiceImpl {
+import com.CampusGo.commons.configs.error.exceptions.ConflictException;
+import com.CampusGo.schelude.persistencie.entity.Schelude;
+import com.CampusGo.schelude.persistencie.repository.ScheludeRepository;
+import com.CampusGo.schelude.presentation.dto.ScheludeResponseDTO;
+import com.CampusGo.schelude.presentation.payload.CreateScheludeRequest;
+import com.CampusGo.schelude.service.interfaces.ScheludeService;
+import com.CampusGo.subject.persistencie.entity.Subject;
+import com.CampusGo.subject.persistencie.repository.SubjectRepository;  // Asegúrate de tener el repositorio de Subject importado
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class ScheludeServiceImpl implements ScheludeService {
+
+    private final ScheludeRepository repository;
+    private final SubjectRepository subjectRepository;  // Añadido para obtener el Subject por código
+
+    @Override
+    public ScheludeResponseDTO createSchelude(CreateScheludeRequest request) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        // Convertimos las horas de inicio y fin a formato 24h
+        LocalTime horaIni = parseTime(request.getHoraInicial());
+        LocalTime horaFin = parseTime(request.getHoraFinal());
+
+        if (horaIni.isAfter(horaFin)) {
+            throw new ConflictException("La hora inicial no puede ser posterior a la hora final.");
+        }
+
+        // Verificar si ya existe un horario que se cruce para la misma asignatura
+        List<Schelude> existing = repository.findByCodeAsignatureFk(request.getCodeAsignatureFk());
+
+        for (Schelude sch : existing) {
+            if (sch.getDia().equals(request.getDia())) {
+                LocalTime existingStart = parseTime(sch.getHoraInicial());
+                LocalTime existingEnd = parseTime(sch.getHoraFinal());
+
+                boolean overlaps = !horaIni.isAfter(existingEnd) && !horaFin.isBefore(existingStart);
+                if (overlaps) {
+                    throw new ConflictException("No es posible crear el horario, ya existe uno o se cruza.");
+                }
+            }
+        }
+
+        // Asignar el nuevo código secuencial
+        Integer newCode = repository.findMaxCode();
+        newCode = (newCode == null) ? 1 : newCode + 1;
+
+        // Buscar el Subject por su código (code)
+        Subject subject = subjectRepository.findByCode(request.getCodeAsignatureFk())
+                .orElseThrow(() -> new ConflictException("La asignatura con código " + request.getCodeAsignatureFk() + " no existe."));
+
+        // Crear y guardar el nuevo horario
+        Schelude schelude = new Schelude();
+        schelude.setCode(newCode);  // Asignar el código secuencial
+        schelude.setSubject(subject);  // Establecer la relación con Subject a través del código
+        schelude.setDia(request.getDia());
+        schelude.setHoraInicial(request.getHoraInicial());
+        schelude.setHoraFinal(request.getHoraFinal());
+
+        repository.save(schelude);
+
+        // Responder con el DTO
+        return new ScheludeResponseDTO(
+                schelude.getCode(),
+                request.getCodeAsignatureFk(), // Lo tomamos del request porque aún no hay fetch del subject
+                schelude.getDia(),
+                schelude.getHoraInicial(),
+                schelude.getHoraFinal()
+        );
+    }
+
+    // Método para parsear la hora en formato de 24h
+    private LocalTime parseTime(String time) {
+        try {
+            return LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm"));
+        } catch (Exception e) {
+            throw new ConflictException("Formato de hora no válido. Utilice el formato 24h (HH:mm).");
+        }
+    }
 }
