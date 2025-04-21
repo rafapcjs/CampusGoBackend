@@ -53,6 +53,8 @@ public class SecurityConfig {
       http.requestMatchers(HttpMethod.PUT, "/api/v1/campus-go/students/update").hasRole("STUDENT");
       http.requestMatchers(HttpMethod.GET, "/api/v1/campus-go/students/me").hasRole("STUDENT");
       http.requestMatchers(HttpMethod.PUT,STUDENT_CHANGE_PASSWORD ).hasRole("STUDENT");
+
+      // permisos de student en scheluder
       http.requestMatchers(HttpMethod.GET,SCHELUDE_LIST_BY_STUDENT ).hasRole("STUDENT");
 
 
@@ -69,6 +71,8 @@ public class SecurityConfig {
       // permisos de teacher en la clase Schelude
       http.requestMatchers(HttpMethod.POST,SCHELUDE_REGISTER ).hasRole("TEACHER");
       http.requestMatchers(HttpMethod.GET,SCHELUDE_LIST_ORDER ).hasRole("TEACHER");
+      http.requestMatchers(HttpMethod.PUT,SCHELUDE_UPDATE ).hasRole("TEACHER");
+      http.requestMatchers(HttpMethod.DELETE,SCHELUDE_DELETE ).hasRole("TEACHER");
 
 
 

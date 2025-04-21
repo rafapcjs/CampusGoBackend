@@ -46,5 +46,7 @@ public interface ApiRoutes {
     String SCHELUDE_REGISTER = SCHELUDE_BASE + "/registerSchelude";
     String SCHELUDE_LIST_ORDER = SCHELUDE_BASE + "/listScheludeOrderAsc";
     String SCHELUDE_LIST_BY_STUDENT  =SCHELUDE_BASE + "/listByCodeStudent";
+    String SCHELUDE_UPDATE = SCHELUDE_BASE + "/updateScheludeByCode";
+    String SCHELUDE_DELETE = SCHELUDE_BASE + "/deleteSchelude";
 
 }

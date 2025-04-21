@@ -6,14 +6,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ScheludeRepository extends JpaRepository<Schelude, Integer> {
 
-    // Spring puede generar esta automáticamente, pero puedes dejar el @Query si lo prefieres
+    // Buscar por codigo de asignatura
     @Query("SELECT s FROM Schelude s WHERE s.codeAsignatureFk = :codeAsignatureFk")
     List<Schelude> findByCodeAsignatureFk(Integer codeAsignatureFk);
 
+    // Obtener el maximo code actual
     @Query("SELECT MAX(s.code) FROM Schelude s")
     Integer findMaxCode();
 
@@ -77,6 +79,11 @@ public interface ScheludeRepository extends JpaRepository<Schelude, Integer> {
     ORDER BY scl.dia ASC
     """, nativeQuery = true)
     List<Object[]> findScheludeOrderedByDayForStudent(Integer studentId);
+
+
+    // Buscar horario por code
+    Optional<Schelude> findByCode(Integer code);
+
 
 
 
