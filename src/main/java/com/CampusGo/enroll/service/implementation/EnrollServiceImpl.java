@@ -1,5 +1,6 @@
 package com.CampusGo.enroll.service.implementation;
 
+import com.CampusGo.commons.configs.error.exceptions.ConflictException;
 import com.CampusGo.commons.configs.error.exceptions.ResourceNotFoundException;
 import com.CampusGo.enroll.persistencie.entity.Enroll;
 import com.CampusGo.enroll.persistencie.repository.EnrollRepository;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -34,10 +36,17 @@ public class EnrollServiceImpl implements EnrollService {
     @Transactional
     public void createEnroll(CreateEnrollRequest request) {
         Student student = studentRepository.findById(request.getCodEstudianteFk())
-                .orElseThrow(() -> new ResourceNotFoundException("Estudiante no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Estudiante no encontrado con ID: " + request.getCodEstudianteFk()));
 
         Subject subject = subjectRepository.findByCode(request.getCodAsignatureFk())
-                .orElseThrow(() -> new ResourceNotFoundException("Asignatura no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Asignatura no encontrada con código: " + request.getCodAsignatureFk()));
+
+        // Validar si ya existe matrícula para este estudiante y asignatura
+        boolean exists = enrollRepository.existsByStudentIdAndSubjectCode(student.getId(), subject.getCode());
+        if (exists) {
+            throw new ConflictException("El estudiante con ID " + student.getId() +
+                    " ya está matriculado en la asignatura con código " + subject.getCode());
+        }
 
         // Crear Enroll
         Enroll enroll = new Enroll();
@@ -59,6 +68,7 @@ public class EnrollServiceImpl implements EnrollService {
         gradeRepository.save(grade);
     }
 
+
     private Integer getNextEnrollCode() {
         return enrollRepository.findTopByOrderByCodeDesc()
                 .map(e -> e.getCode() + 1)
@@ -79,13 +89,23 @@ public class EnrollServiceImpl implements EnrollService {
     @Transactional
     public void createBulkEnroll(BulkEnrollRequest request) {
         Student student = studentRepository.findById(request.getCodEstudianteFk())
-                .orElseThrow(() -> new ResourceNotFoundException("Estudiante no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Estudiante no encontrado con ID: " + request.getCodEstudianteFk()));
+
+        List<Integer> asignaturasExistentes = request.getCodAsignatureFks().stream()
+                .filter(codeAsignature ->
+                        enrollRepository.existsByStudentIdAndSubjectCode(student.getId(), codeAsignature))
+                .toList();
+
+        if (!asignaturasExistentes.isEmpty()) {
+            throw new ConflictException("El estudiante con ID " + student.getId() +
+                    " ya está matriculado en las siguientes asignaturas con código: " + asignaturasExistentes);
+        }
 
         for (Integer codeAsignature : request.getCodAsignatureFks()) {
             Subject subject = subjectRepository.findByCode(codeAsignature)
-                    .orElseThrow(() -> new ResourceNotFoundException("Asignatura no encontrada: " + codeAsignature));
+                    .orElseThrow(() -> new ResourceNotFoundException("Asignatura no encontrada con código: " + codeAsignature));
 
-            // Enroll
+            // Crear Enroll
             Enroll enroll = new Enroll();
             enroll.setCode(getNextEnrollCode());
             enroll.setFechaRegistra(LocalDateTime.now());
@@ -93,7 +113,7 @@ public class EnrollServiceImpl implements EnrollService {
             enroll.setSubject(subject);
             enrollRepository.save(enroll);
 
-            // Grade
+            // Crear Grade
             Grade grade = new Grade();
             grade.setCode(getNextGradeCode());
             grade.setStudent(student);
@@ -105,5 +125,7 @@ public class EnrollServiceImpl implements EnrollService {
             gradeRepository.save(grade);
         }
     }
+
+
 
 }
