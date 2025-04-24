@@ -65,6 +65,8 @@ public interface EnrollRepository extends JpaRepository<Enroll, Integer> {
     List<Object[]> findAllEnrollInfoByStudentId(@Param("studentId") String studentId);
 
 
+
+
     @Query(value = """
     SELECT
         e.code,
@@ -89,6 +91,26 @@ public interface EnrollRepository extends JpaRepository<Enroll, Integer> {
 
 
 
+    @Query(value = """
+    SELECT
+        e.code,
+        e.cod_asignature_fk,
+        UPPER(s.name) AS nameAsignature,
+        e.cod_estudiante_fk,
+        UPPER(u.name || ' ' || u.last_name) AS fullName,
+        e.fecha_registra
+    FROM
+        enroll e
+    JOIN
+        subject s ON e.cod_asignature_fk = s.code
+    JOIN
+        users u ON e.cod_estudiante_fk = u.id
+    WHERE
+        TO_CHAR(e.fecha_registra, 'DD/MM/YYYY') = :registerDate
+    ORDER BY
+        e.code ASC
+""", nativeQuery = true)
+    List<Object[]> findAllEnrollInfoByRegisterDate(@Param("registerDate") String registerDate);
 
 
 }

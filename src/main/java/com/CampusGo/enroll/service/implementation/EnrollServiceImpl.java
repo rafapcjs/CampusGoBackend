@@ -204,6 +204,20 @@ public class EnrollServiceImpl implements EnrollService {
     }
 
 
+    // Servicio para listar y filtrar las matriculas por fecha de creación
+    @Override
+    public List<EnrollInfoDTO> getAllEnrollInfoByRegisterDate(String registerDate) {
+        List<Object[]> result = enrollRepository.findAllEnrollInfoByRegisterDate(registerDate);
+        return result.stream().map(obj -> new EnrollInfoDTO(
+                (Integer) obj[0],                          // code
+                (Integer) obj[1],                          // codAsignatureFk
+                (String) obj[2],                           // nameAsignature
+                ((Number) obj[3]).longValue(),             // codEstudianteFk
+                (String) obj[4],                           // fullName
+                (Timestamp) obj[5]                         // fechaRegistra
+        )).collect(Collectors.toList());
+    }
+
 }
 
 

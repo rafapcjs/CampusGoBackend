@@ -90,5 +90,17 @@ public class EnrollController {
         return ResponseEntity.ok(enrolls);
     }
 
+    @Operation(
+            summary = "Listar matriculas por fecha de cración",
+            description = "Listar matriculas por fecha en la que se registro la creación"
+    )
+    @GetMapping(ENROLL_LIST_BY_DATE)
+    public ResponseEntity<List<EnrollInfoDTO>> getAllEnrollInfoByRegisterDate(
+            @RequestParam("date") String registerDate) {
+        List<EnrollInfoDTO> result = enrollService.getAllEnrollInfoByRegisterDate(registerDate);
+        return ResponseEntity.ok(result);
+    }
+
+
 
 }

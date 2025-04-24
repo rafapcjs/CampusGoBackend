@@ -20,6 +20,9 @@ public interface EnrollService {
 
     List<EnrollInfoDTO> getAllEnrollInfoBySubjectCode(String subjectCode);
 
+    List<EnrollInfoDTO> getAllEnrollInfoByRegisterDate(String registerDate);
+
+
 
 
 }
