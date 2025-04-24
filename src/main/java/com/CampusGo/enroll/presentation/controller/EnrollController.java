@@ -79,5 +79,16 @@ public class EnrollController {
     }
 
 
+    @Operation(
+            summary = "Listar matriculas por codigo",
+            description = "Listar matriculas por codigo - like"
+    )
+    @GetMapping(ENROLL_LIST_BY_CODE_ASIGNATURE)
+    public ResponseEntity<List<EnrollInfoDTO>> getEnrollInfoBySubjectCode(
+            @RequestParam("code") String subjectCode) {
+        List<EnrollInfoDTO> enrolls = enrollService.getAllEnrollInfoBySubjectCode(subjectCode);
+        return ResponseEntity.ok(enrolls);
+    }
+
 
 }

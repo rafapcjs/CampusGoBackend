@@ -65,5 +65,30 @@ public interface EnrollRepository extends JpaRepository<Enroll, Integer> {
     List<Object[]> findAllEnrollInfoByStudentId(@Param("studentId") String studentId);
 
 
+    @Query(value = """
+    SELECT
+        e.code,
+        e.cod_asignature_fk,
+        UPPER(s.name) AS nameAsignature,
+        e.cod_estudiante_fk,
+        UPPER(u.name || ' ' || u.last_name) AS fullName,
+        e.fecha_registra
+    FROM
+        enroll e
+    JOIN
+        subject s ON e.cod_asignature_fk = s.code
+    JOIN
+        users u ON e.cod_estudiante_fk = u.id
+    WHERE
+        CAST(e.cod_asignature_fk AS TEXT) LIKE %:subjectCode%
+    ORDER BY
+        e.code ASC
+    """, nativeQuery = true)
+    List<Object[]> getAllEnrollInfoBySubjectCode(@Param("subjectCode") String subjectCode);
+
+
+
+
+
 
 }
