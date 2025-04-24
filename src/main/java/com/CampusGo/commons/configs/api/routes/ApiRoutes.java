@@ -54,5 +54,8 @@ public interface ApiRoutes {
     String ENROLL_REGISTER = ENROLL_BASE + "/registerEnroll";
     String ENROLL_MULTI_REGISTER = ENROLL_BASE + "/registerMultiEnroll";
     String ENROLL_DELETE = ENROLL_BASE + "/deleteByCodeEnroll";
-
+    String ENROLL_LIST_ALL = ENROLL_BASE + "/listAll";
+    String ENROLL_LIST_BY_ID_STUDENT = ENROLL_BASE + "/listAllByCodeIdStudent";
+    String ENROLL_LIST_BY_CODE_ASIGNATURE = ENROLL_BASE + "/listAllByCodeAsignature";
+    String ENROLL_LIST_BY_DATE = ENROLL_BASE + "/listAllByDate";
 }

@@ -1,5 +1,7 @@
 package com.CampusGo.enroll.presentation.controller;
 
+import com.CampusGo.enroll.persistencie.repository.EnrollRepository;
+import com.CampusGo.enroll.presentation.dto.EnrollInfoDTO;
 import com.CampusGo.enroll.presentation.payload.BulkEnrollRequest;
 import com.CampusGo.enroll.presentation.payload.CreateEnrollRequest;
 import com.CampusGo.enroll.service.interfaces.EnrollService;
@@ -11,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
+import java.util.List;
+
 import static com.CampusGo.commons.configs.api.routes.ApiRoutes.*;
 
 @Tag(name = "Matriculas", description = "Operaciones relacionadas con la gestión de matriculas")
@@ -19,6 +24,9 @@ import static com.CampusGo.commons.configs.api.routes.ApiRoutes.*;
 public class EnrollController {
 
     private final EnrollService enrollService;
+
+    private final EnrollRepository enrollRepository;
+
 
     @Operation(
             summary = "Matricular a un estudiante",
@@ -48,6 +56,17 @@ public class EnrollController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteEnroll(@RequestParam("code") Integer code) {
         enrollService.deleteEnrollByCode(code);
+    }
+
+
+
+    @Operation(
+            summary = "Listar todas las matrículas con información detallada",
+            description = "Listar de forma general todas las matriculas"
+    )
+    @GetMapping(ENROLL_LIST_ALL) // Asegúrate de definir esta ruta en ApiRoutes
+    public ResponseEntity<List<EnrollInfoDTO>> getAllEnrollInfo() {
+        return ResponseEntity.ok(enrollService.getAllEnrollInfo());
     }
 
 

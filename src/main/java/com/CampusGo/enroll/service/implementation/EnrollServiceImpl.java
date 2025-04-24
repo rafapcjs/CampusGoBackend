@@ -4,6 +4,7 @@ import com.CampusGo.commons.configs.error.exceptions.ConflictException;
 import com.CampusGo.commons.configs.error.exceptions.ResourceNotFoundException;
 import com.CampusGo.enroll.persistencie.entity.Enroll;
 import com.CampusGo.enroll.persistencie.repository.EnrollRepository;
+import com.CampusGo.enroll.presentation.dto.EnrollInfoDTO;
 import com.CampusGo.enroll.presentation.payload.BulkEnrollRequest;
 import com.CampusGo.enroll.presentation.payload.CreateEnrollRequest;
 import com.CampusGo.enroll.service.interfaces.EnrollService;
@@ -17,9 +18,12 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -149,4 +153,26 @@ public class EnrollServiceImpl implements EnrollService {
 
 
 
+    // Servicio para listar todas la matriculas
+
+    @Override
+    public List<EnrollInfoDTO> getAllEnrollInfo() {
+        List<Object[]> results = enrollRepository.findAllEnrollInfoRaw();
+
+        return results.stream()
+                .map(row -> new EnrollInfoDTO(
+                        (Integer) row[0],                             // code
+                        (Integer) row[1],                             // codAsignatureFk
+                        (String) row[2],                              // nameAsignature
+                        ((Number) row[3]).longValue(),                // codEstudianteFk (cast a Long)
+                        (String) row[4],                              // fullName
+                        (Timestamp) row[5]                            // fechaRegistra
+                ))
+                .collect(Collectors.toList());
+    }
+
+
+
+
 }
+
