@@ -54,10 +54,8 @@ public class ScheludeController {
             description = "Lista todos los horarios existentes para un estudiante ordenados por día."
     )
     @GetMapping(SCHELUDE_LIST_BY_STUDENT)
-    public ResponseEntity<List<ListOrderScheludeDTO>> getScheludeByStudent(
-            @RequestParam Integer studentId
-    ) {
-        List<ListOrderScheludeDTO> result = scheludeService.getOrderedScheludeByStudent(studentId);
+    public ResponseEntity<List<ListOrderScheludeDTO>> getScheludeByStudent() {
+        List<ListOrderScheludeDTO> result = scheludeService.getOrderedScheludeByStudent();
         return ResponseEntity.ok(result);
     }
 

@@ -10,9 +10,12 @@ import com.CampusGo.schelude.presentation.dto.ScheludeResponseDTO;
 import com.CampusGo.schelude.presentation.payload.CreateScheludeRequest;
 import com.CampusGo.schelude.presentation.payload.UpdateScheludeRequest;
 import com.CampusGo.schelude.service.interfaces.ScheludeService;
+import com.CampusGo.security.util.UserContextUtils;
+import com.CampusGo.student.persistencie.entity.Student;
 import com.CampusGo.subject.persistencie.entity.Subject;
 import com.CampusGo.subject.persistencie.repository.SubjectRepository;  // Asegúrate de tener el repositorio de Subject importado
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -26,6 +29,9 @@ public class ScheludeServiceImpl implements ScheludeService {
 
     private final ScheludeRepository repository;
     private final SubjectRepository subjectRepository;  // Añadido para obtener el Subject por código
+
+    @Autowired
+    private UserContextUtils userContextUtils;
 
 
     // Metodo para crear un horario
@@ -120,23 +126,28 @@ public class ScheludeServiceImpl implements ScheludeService {
     // Metodo para listar horarios de un estudiante por su ID
 
     @Override
-    public List<ListOrderScheludeDTO> getOrderedScheludeByStudent(Integer studentId) {
-        List<Object[]> rawResult = repository.findScheludeOrderedByDayForStudent(studentId);
+    public List<ListOrderScheludeDTO> getOrderedScheludeByStudent() {
+        Student student = userContextUtils.getCurrentStudent();
+        Long studentCode = student.getId(); // o getCode() si corresponde
 
-        if (rawResult.isEmpty()) {
-            throw new ResourceNotFoundException("No se encontraron horarios para el estudiante con ID: " + studentId);
+        List<Object[]> rawResults = repository.findScheludeOrderedByDayForStudent(studentCode);
+
+        if (rawResults.isEmpty()) {
+            throw new ConflictException("El estudiante no tiene horarios asignados.");
         }
 
-        return rawResult.stream().map(obj -> new ListOrderScheludeDTO(
-                (Integer) obj[0],     // code
-                (Integer) obj[1],     // codeSubject
-                (String) obj[2],      // name
-                (String) obj[3],      // dia
-                (String) obj[4],      // horaInicial
-                (String) obj[5],      // horaFinal
-                (String) obj[6]       // nameTeacher
+        return rawResults.stream().map(obj -> new ListOrderScheludeDTO(
+                (Integer) obj[0], // code
+                (Integer) obj[1], // codeAsignatureFk
+                (String) obj[2],  // nombreAsignatura
+                (String) obj[3],  // facultad
+                (String) obj[4],  // salon
+                (String) obj[5],  // horaInicial
+                (String) obj[6]   // horaFinal
         )).toList();
     }
+
+
 
 
     // Metodo para actualizar un horario por su code

@@ -12,7 +12,7 @@ public interface ScheludeService {
 
     ScheludeResponseDTO createSchelude(CreateScheludeRequest request);
     List<ListOrderScheludeDTO> listAllOrderSchelude();
-    List<ListOrderScheludeDTO> getOrderedScheludeByStudent(Integer studentId);
+    List<ListOrderScheludeDTO> getOrderedScheludeByStudent();
     ScheludeResponseDTO updateSchelude(UpdateScheludeRequest request);
     InfoMessage deleteScheludeByCode(Integer code);
 
