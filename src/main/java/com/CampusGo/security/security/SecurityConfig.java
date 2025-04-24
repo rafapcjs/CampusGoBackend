@@ -74,6 +74,8 @@ public class SecurityConfig {
       http.requestMatchers(HttpMethod.PUT,SCHELUDE_UPDATE ).hasRole("TEACHER");
       http.requestMatchers(HttpMethod.DELETE,SCHELUDE_DELETE ).hasRole("TEACHER");
 
+      // permisos de teacher en la clase Enroll
+      http.requestMatchers(HttpMethod.POST,ENROLL_REGISTER ).hasRole("TEACHER");
 
 
       // permisos para materias teacher
