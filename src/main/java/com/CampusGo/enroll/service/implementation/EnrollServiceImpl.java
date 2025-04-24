@@ -3,6 +3,7 @@ package com.CampusGo.enroll.service.implementation;
 import com.CampusGo.commons.configs.error.exceptions.ResourceNotFoundException;
 import com.CampusGo.enroll.persistencie.entity.Enroll;
 import com.CampusGo.enroll.persistencie.repository.EnrollRepository;
+import com.CampusGo.enroll.presentation.payload.BulkEnrollRequest;
 import com.CampusGo.enroll.presentation.payload.CreateEnrollRequest;
 import com.CampusGo.enroll.service.interfaces.EnrollService;
 import com.CampusGo.grade.persistencie.entity.Grade;
@@ -25,6 +26,9 @@ public class EnrollServiceImpl implements EnrollService {
     private final GradeRepository gradeRepository;
     private final StudentRepository studentRepository;
     private final SubjectRepository subjectRepository;
+
+
+    // Servicio para el registro de matricula de un estudiante x asignatura
 
     @Override
     @Transactional
@@ -66,4 +70,40 @@ public class EnrollServiceImpl implements EnrollService {
                 .map(g -> g.getCode() + 1)
                 .orElse(1);
     }
+
+
+
+    // Servicio para el registro de varias matriculas x asignatura
+
+    @Override
+    @Transactional
+    public void createBulkEnroll(BulkEnrollRequest request) {
+        Student student = studentRepository.findById(request.getCodEstudianteFk())
+                .orElseThrow(() -> new ResourceNotFoundException("Estudiante no encontrado"));
+
+        for (Integer codeAsignature : request.getCodAsignatureFks()) {
+            Subject subject = subjectRepository.findByCode(codeAsignature)
+                    .orElseThrow(() -> new ResourceNotFoundException("Asignatura no encontrada: " + codeAsignature));
+
+            // Enroll
+            Enroll enroll = new Enroll();
+            enroll.setCode(getNextEnrollCode());
+            enroll.setFechaRegistra(LocalDateTime.now());
+            enroll.setStudent(student);
+            enroll.setSubject(subject);
+            enrollRepository.save(enroll);
+
+            // Grade
+            Grade grade = new Grade();
+            grade.setCode(getNextGradeCode());
+            grade.setStudent(student);
+            grade.setSubject(subject);
+            grade.setCorte1(0.0f);
+            grade.setCorte2(0.0f);
+            grade.setCorte3(0.0f);
+            grade.setCorte4(0.0f);
+            gradeRepository.save(grade);
+        }
+    }
+
 }

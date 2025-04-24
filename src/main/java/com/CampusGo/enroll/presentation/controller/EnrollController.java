@@ -1,5 +1,6 @@
 package com.CampusGo.enroll.presentation.controller;
 
+import com.CampusGo.enroll.presentation.payload.BulkEnrollRequest;
 import com.CampusGo.enroll.presentation.payload.CreateEnrollRequest;
 import com.CampusGo.enroll.service.interfaces.EnrollService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.CampusGo.commons.configs.api.routes.ApiRoutes.ENROLL_MULTI_REGISTER;
 import static com.CampusGo.commons.configs.api.routes.ApiRoutes.ENROLL_REGISTER;
 
 @Tag(name = "Matriculas", description = "Operaciones relacionadas con la gestión de matriculas")
@@ -31,4 +33,16 @@ public class EnrollController {
         enrollService.createEnroll(request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @Operation(
+            summary = "Matricular varias asignaturas a un estudiante",
+            description = "Matricula e inicializa el registro multiple de notas de un estudiante"
+    )
+    @PostMapping(ENROLL_MULTI_REGISTER)
+    public ResponseEntity<Void> createBulkEnroll(@Valid @RequestBody BulkEnrollRequest request) {
+        enrollService.createBulkEnroll(request);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+
 }
