@@ -69,6 +69,15 @@ public class EnrollController {
         return ResponseEntity.ok(enrollService.getAllEnrollInfo());
     }
 
+    @Operation(
+            summary = "Listar todas las matrículas del estudiante por ID",
+            description = "Listar todas las matrículas registradas a un estudiante filtrando por su ID"
+    )
+    @GetMapping(ENROLL_LIST_BY_ID_STUDENT)
+    public ResponseEntity<List<EnrollInfoDTO>> getEnrollInfoByStudentId(@RequestParam String studentId) {
+        return ResponseEntity.ok(enrollService.getAllEnrollInfoByStudentId(studentId));
+    }
+
 
 
 }

@@ -16,6 +16,6 @@ public interface EnrollService {
 
     List<EnrollInfoDTO> getAllEnrollInfo();
 
-
+    List<EnrollInfoDTO> getAllEnrollInfoByStudentId(String studentId);
 
 }

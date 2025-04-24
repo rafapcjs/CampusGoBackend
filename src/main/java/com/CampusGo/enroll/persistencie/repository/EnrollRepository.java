@@ -4,6 +4,7 @@ import com.CampusGo.enroll.persistencie.entity.Enroll;
 import com.CampusGo.enroll.presentation.dto.EnrollInfoDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,6 +17,8 @@ public interface EnrollRepository extends JpaRepository<Enroll, Integer> {
     boolean existsByStudentIdAndSubjectCode(Long studentId, Integer subjectCode);
 
     Optional<Enroll> findByCode(Integer code);
+
+
 
 
     @Query(value = """
@@ -36,6 +39,30 @@ public interface EnrollRepository extends JpaRepository<Enroll, Integer> {
         e.code ASC
     """, nativeQuery = true)
     List<Object[]> findAllEnrollInfoRaw();
+
+
+
+
+    @Query(value = """
+    SELECT
+        e.code AS code,
+        e.cod_asignature_fk AS codAsignatureFk,
+        UPPER(s.name) AS nameAsignature,
+        e.cod_estudiante_fk AS codEstudianteFk,
+        UPPER(u.name || ' ' || u.last_name) AS fullName,
+        e.fecha_registra AS fechaRegistra
+    FROM
+        enroll e
+    JOIN
+        subject s ON e.cod_asignature_fk = s.code
+    JOIN
+        users u ON e.cod_estudiante_fk = u.id
+    WHERE
+        CAST(e.cod_estudiante_fk AS TEXT) LIKE %:studentId%
+    ORDER BY
+        e.code ASC
+    """, nativeQuery = true)
+    List<Object[]> findAllEnrollInfoByStudentId(@Param("studentId") String studentId);
 
 
 

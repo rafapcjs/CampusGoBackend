@@ -153,8 +153,10 @@ public class EnrollServiceImpl implements EnrollService {
 
 
 
-    // Servicio para listar todas la matriculas
 
+
+
+    // Servicio para listar todas la matriculas
     @Override
     public List<EnrollInfoDTO> getAllEnrollInfo() {
         List<Object[]> results = enrollRepository.findAllEnrollInfoRaw();
@@ -171,6 +173,23 @@ public class EnrollServiceImpl implements EnrollService {
                 .collect(Collectors.toList());
     }
 
+
+
+
+
+    // Servicio para listar y filtrar las matriculas por ID del estudiante
+    @Override
+    public List<EnrollInfoDTO> getAllEnrollInfoByStudentId(String studentId) {
+        List<Object[]> result = enrollRepository.findAllEnrollInfoByStudentId(studentId);
+        return result.stream().map(obj -> new EnrollInfoDTO(
+                (Integer) obj[0],
+                (Integer) obj[1],
+                (String) obj[2],
+                ((Number) obj[3]).longValue(),
+                (String) obj[4],
+                (Timestamp) obj[5]
+        )).collect(Collectors.toList());
+    }
 
 
 

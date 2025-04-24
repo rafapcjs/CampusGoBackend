@@ -49,6 +49,8 @@ public interface ApiRoutes {
     String SCHELUDE_UPDATE = SCHELUDE_BASE + "/updateScheludeByCode";
     String SCHELUDE_DELETE = SCHELUDE_BASE + "/deleteSchelude";
 
+
+
     // ruta para schelude
     String ENROLL_BASE = BASE_API + "/enroll";
     String ENROLL_REGISTER = ENROLL_BASE + "/registerEnroll";
