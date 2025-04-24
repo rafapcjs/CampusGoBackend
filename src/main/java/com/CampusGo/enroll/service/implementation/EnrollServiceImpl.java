@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -124,6 +125,26 @@ public class EnrollServiceImpl implements EnrollService {
             grade.setCorte4(0.0f);
             gradeRepository.save(grade);
         }
+    }
+
+
+    // Servicio para eliminación de matricula y su registro de notas
+
+    @Override
+    @Transactional
+    public void deleteEnrollByCode(Integer code) {
+        Enroll enroll = enrollRepository.findByCode(code)
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró matrícula con el código: " + code));
+
+        Long studentId = enroll.getStudent().getId();
+        Integer subjectCode = enroll.getSubject().getCode();
+
+        // Eliminar Grade asociado
+        Optional<Grade> optionalGrade = gradeRepository.findByStudentIdAndSubjectCode(studentId, subjectCode);
+        optionalGrade.ifPresent(gradeRepository::delete);
+
+        // Eliminar Enroll
+        enrollRepository.delete(enroll);
     }
 
 

@@ -6,5 +6,6 @@ import com.CampusGo.enroll.presentation.payload.CreateEnrollRequest;
 public interface EnrollService {
     void createEnroll(CreateEnrollRequest request);
     void createBulkEnroll(BulkEnrollRequest request);
+    void deleteEnrollByCode(Integer code);
 
 }

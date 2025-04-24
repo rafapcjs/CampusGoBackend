@@ -9,6 +9,10 @@ import java.util.Optional;
 @Repository
 public interface EnrollRepository extends JpaRepository<Enroll, Integer> {
     Optional<Enroll> findTopByOrderByCodeDesc();
+
     boolean existsByStudentIdAndSubjectCode(Long studentId, Integer subjectCode);
+
+    Optional<Enroll> findByCode(Integer code);
+
 
 }

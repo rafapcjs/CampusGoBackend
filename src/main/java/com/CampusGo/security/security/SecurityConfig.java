@@ -77,6 +77,7 @@ public class SecurityConfig {
       // permisos de teacher en la clase Enroll
       http.requestMatchers(HttpMethod.POST,ENROLL_REGISTER ).hasRole("TEACHER");
       http.requestMatchers(HttpMethod.POST,ENROLL_MULTI_REGISTER ).hasRole("TEACHER");
+      http.requestMatchers(HttpMethod.DELETE,ENROLL_DELETE ).hasRole("TEACHER");
 
 
       // permisos para materias teacher
