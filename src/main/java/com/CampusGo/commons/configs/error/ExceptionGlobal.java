@@ -65,6 +65,7 @@ public class ExceptionGlobal {
     }
 
     // Manejo de cualquier otra excepción no controlada.
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGeneral(Exception ex) {
         ApiError error = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal Server Error", "Ocurrió un error inesperado");
