@@ -121,6 +121,7 @@ public class ScheludeServiceImpl implements ScheludeService {
 
     @Override
     public List<ListOrderScheludeDTO> getOrderedScheludeByStudent(Integer studentId) {
+
         List<Object[]> rawResult = repository.findScheludeOrderedByDayForStudent(studentId);
 
         if (rawResult.isEmpty()) {
