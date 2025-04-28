@@ -88,12 +88,27 @@ public class SecurityConfig {
                     http.requestMatchers(HttpMethod.GET, SUBJECT_SEARCH_NAME + "/**").hasRole("TEACHER");
                     http.requestMatchers(HttpMethod.GET,SUBJECT_LIST_BY_ORDER_NAME ).hasRole("TEACHER");
                     http.requestMatchers(HttpMethod.GET,SUBJECT_LIST_BY_ORDER_CODE ).hasRole("TEACHER");
-
+                    http.requestMatchers(HttpMethod.GET,SUBJECT_MY_TEACHER ).hasRole("TEACHER");
                     http.requestMatchers(HttpMethod.POST,SUBJECT_REGISTER ).hasRole("TEACHER");
                     http.requestMatchers(HttpMethod.GET, SUBJECT_SEARCH_NAME + "/**").hasRole("TEACHER");
                     http.requestMatchers(HttpMethod.GET, SUBJECT_SEARCH_CODE + "/**").hasRole("TEACHER");
                     http.requestMatchers(HttpMethod.PUT, SUBJECT_UPDATE + "/**").hasRole("TEACHER");
 
+// permisos de subject para student
+                    http.requestMatchers(HttpMethod.GET, SUBJECT_MY_STUDENT)
+                            .hasRole("STUDENT");
+
+ // permiso de nota para profesor
+                    http   .requestMatchers(HttpMethod.GET,  GRADE_LIST_BY_SUBJECT_TEACHER + "/++")
+                            .hasRole("TEACHER");
+
+                    http  .requestMatchers(HttpMethod.PUT,  GRADE_REGISTER                + "/++")
+                            .hasRole("TEACHER");
+
+               // permiso de student en notas
+                    // permiso para student sobre notas
+                    http .requestMatchers(HttpMethod.GET, GRADE_MY_GRADES)
+                            .hasRole("STUDENT");
 
 
                     http.anyRequest().denyAll();

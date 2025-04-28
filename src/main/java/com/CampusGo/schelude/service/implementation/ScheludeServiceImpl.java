@@ -126,15 +126,9 @@ public class ScheludeServiceImpl implements ScheludeService {
     // Metodo para listar horarios de un estudiante por su ID
 
     @Override
-<<<<<<< HEAD
-    public List<ListOrderScheludeDTO> getOrderedScheludeByStudent(Integer studentId) {
-
-        List<Object[]> rawResult = repository.findScheludeOrderedByDayForStudent(studentId);
-=======
     public List<ListOrderScheludeDTO> getOrderedScheludeByStudent() {
         Student student = userContextUtils.getCurrentStudent();
         Long studentCode = student.getId(); // o getCode() si corresponde
->>>>>>> 14d59f3d18af300518cdc98266bdb82c4f0303b1
 
         List<Object[]> rawResults = repository.findScheludeOrderedByDayForStudent(studentCode);
 

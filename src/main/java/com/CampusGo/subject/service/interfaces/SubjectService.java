@@ -6,6 +6,8 @@ import com.CampusGo.subject.presentation.payload.UpdateSubjectRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface SubjectService {
 
     void save (CreateSubjectRequest request);
@@ -14,4 +16,8 @@ public interface SubjectService {
     Page<SubjectDetailsResponseDto> geAllSubjectByName(String name, Pageable pageable);
      SubjectDetailsResponseDto findByCode (Integer code);
      void updateSubjectByCodeTeacher(Integer codeSubject , UpdateSubjectRequest request );
+    List<SubjectDetailsResponseDto> getSubjectsTheTeacher();
+    List<SubjectDetailsResponseDto> getSubjectsTheStudent();
+
+
 }

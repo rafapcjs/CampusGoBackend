@@ -3,6 +3,7 @@ package com.CampusGo.subject.service.implementation;
 import com.CampusGo.academicPeriod.persistencie.entity.Academic;
 import com.CampusGo.academicPeriod.persistencie.repository.AcademicRepository;
 import com.CampusGo.commons.configs.error.exceptions.ResourceNotFoundException;
+import com.CampusGo.security.util.SecurityUtils;
 import com.CampusGo.subject.persistencie.entity.Subject;
 import com.CampusGo.subject.persistencie.repository.SubjectRepository;
 import com.CampusGo.subject.presentation.dto.SubjectDetailsResponseDto;
@@ -17,6 +18,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class SubjectServiceImpl  implements SubjectService {
@@ -96,6 +100,22 @@ public class SubjectServiceImpl  implements SubjectService {
         subject.setTeacher(teacher);
 
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SubjectDetailsResponseDto> getSubjectsTheTeacher() {
+        return subjectRepository.getSubjectsTheTeacher(
+                SecurityUtils.getCurrentUsername()
+        );
+    }
+
+    @Override
+    public List<SubjectDetailsResponseDto> getSubjectsTheStudent() {
+        return subjectRepository.getSubjectsTheTeacher(
+                SecurityUtils.getCurrentUsername()
+        );
+    }
+
     private Integer generateRandomCode() {
         // Genera un código aleatorio entre 100000 y 999999
         int randomCode = (int) (Math.random() * 900000) + 100000;

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -73,6 +74,47 @@ public interface SubjectRepository extends JpaRepository<Subject, Long> {
     ORDER BY s.name ASC
 """)
     Page<SubjectDetailsResponseDto> findAllSubjectDetailsOrderedByName(Pageable pageable);
+
+    @Query("""
+    SELECT NEW com.CampusGo.subject.presentation.dto.SubjectDetailsResponseDto(
+        s.code,
+        s.name,
+        CONCAT(a.anio, ' - Semestre ', a.nSemestre),
+        a.code,
+        prof.teacherCode,
+        u.name,
+        u.lastName
+    )
+    FROM Subject s
+    JOIN Academic a       ON a.code       = s.codePeriodoAca
+    JOIN Teacher prof     ON prof.id      = s.teacher.id
+    JOIN UserEntity u     ON u.id         = prof.user.id
+    WHERE u.username = :name
+    ORDER BY s.name ASC
+""")
+    List<SubjectDetailsResponseDto> getSubjectsTheTeacher(@Param("name") String name);
+
+    @Query("""
+        SELECT NEW com.CampusGo.subject.presentation.dto.SubjectDetailsResponseDto(
+            s.code,
+            s.name,
+            CONCAT(a.anio, ' - Semestre ', a.nSemestre),
+            a.code,
+            prof.teacherCode,
+            pu.name,
+            pu.lastName
+        )
+        FROM Enroll e
+        JOIN e.subject    s
+        JOIN s.academic    a
+        JOIN s.teacher     prof
+        JOIN prof.user     pu
+        JOIN e.student     stu
+        JOIN stu.user      su
+        WHERE su.username = :name
+        ORDER BY s.name ASC
+    """)
+    List<SubjectDetailsResponseDto> getSubjectsTheStudent(@Param("name") String name);
 
 
     @Query("""

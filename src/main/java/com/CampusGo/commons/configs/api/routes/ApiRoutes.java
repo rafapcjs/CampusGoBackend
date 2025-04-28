@@ -39,6 +39,9 @@ public interface ApiRoutes {
     String SUBJECT_UPDATE = SUBJECT_BASE + "/updateSubject";
     String SUBJECT_LIST_BY_ORDER_CODE = ACADEMIC_BASE + "/getAllOrderCodeSubject";
     String SUBJECT_LIST_BY_ORDER_NAME = ACADEMIC_BASE + "/getAllOrderNameSubject";
+    String SUBJECT_MY_TEACHER = BASE_API + "/teacherWithHisSubject";
+    String SUBJECT_MY_STUDENT = BASE_API + "/studentWithHisSubject";
+
 
     // ruta para schelude
 
@@ -60,4 +63,16 @@ public interface ApiRoutes {
     String ENROLL_LIST_BY_ID_STUDENT = ENROLL_BASE + "/listAllByCodeIdStudent";
     String ENROLL_LIST_BY_CODE_ASIGNATURE = ENROLL_BASE + "/listAllByCodeAsignature";
     String ENROLL_LIST_BY_DATE = ENROLL_BASE + "/listAllByDate";
+
+    // ruta para grade
+
+
+    String GRADE_BASE = BASE_API + "/grade";
+    String GRADE_REGISTER = GRADE_BASE + "/registerGrade";
+    String GRADE_LIST_BY_SUBJECT = GRADE_BASE + "/grades-by-subject";
+    String GRADE_MY_GRADES   = GRADE_BASE + "/my-grades";
+    String GRADE_LIST_BY_SUBJECT_TEACHER   = GRADE_BASE + "/my-gradesTheMyStudent";
+
+
 }
+

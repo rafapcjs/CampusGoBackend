@@ -17,39 +17,40 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
+
 import static com.CampusGo.commons.configs.api.routes.ApiRoutes.*;
+
 @RestController
+@Tag(name = "Subjects", description = "Operaciones relacionadas con asignaturas")
 @RequiredArgsConstructor
-@Tag(name = "Subject")
 public class SubjectController {
 
-      final private  SubjectService subjectService;
-
+    private final SubjectService subjectService;
 
     @Operation(summary = "Crear un nuevo subject",
-            description = "Registra una nueva asignatura en el sistema. Se espera que todos los parámetros sean válidos.",
-            tags = {"Subjects"})
+            description = "Registra una nueva asignatura en el sistema.")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Registro exitoso. La asignatura ha sido creada con éxito."),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos. Asegúrese de que todos los parámetros sean correctos."),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor. No se pudo procesar la solicitud.")
+            @ApiResponse(responseCode = "201", description = "Asignatura creada."),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos."),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor.")
     })
     @PostMapping(SUBJECT_REGISTER)
-    public ResponseEntity<?> registerSubject(@RequestBody CreateSubjectRequest request) throws URISyntaxException {
+    public ResponseEntity<Void> registerSubject(@RequestBody CreateSubjectRequest request)
+            throws URISyntaxException {
         subjectService.save(request);
         return ResponseEntity.created(new URI(SUBJECT_REGISTER)).build();
     }
 
-    @Operation(summary = "Obtener todos los subjects ordenados por nombre",
-            description = "Devuelve una lista paginada de asignaturas ordenadas por el nombre, con detalles adicionales.",
-            tags = {"Subjects"})
+    @Operation(summary = "Listar subjects por nombre",
+            description = "Devuelve asignaturas paginadas filtradas por nombre.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Solicitud exitosa. Retorna la lista paginada de asignaturas."),
-            @ApiResponse(responseCode = "400", description = "Parámetros de solicitud inválidos."),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor.")
+            @ApiResponse(responseCode = "200", description = "Listado correcto."),
+            @ApiResponse(responseCode = "400", description = "Parámetros inválidos."),
+            @ApiResponse(responseCode = "500", description = "Error interno.")
     })
     @GetMapping(SUBJECT_LIST_BY_ORDER_NAME)
-    public ResponseEntity<Page<SubjectDetailsResponseDto>> getAllSubjectByOrderName(
+    public ResponseEntity<Page<SubjectDetailsResponseDto>> getAllSubjectsByName(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "name") String sortBy,
@@ -60,36 +61,61 @@ public class SubjectController {
         return ResponseEntity.ok(subjects);
     }
 
-    @Operation(summary = "Obtener todos los subjects ordenados por código",
-            description = "Devuelve una lista paginada de asignaturas ordenadas por el código, con detalles adicionales.",
-            tags = {"Subjects"})
+    @Operation(summary = "Listar subjects por código",
+            description = "Devuelve asignaturas paginadas filtradas por código.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Solicitud exitosa. Retorna la lista paginada de asignaturas."),
-            @ApiResponse(responseCode = "400", description = "Parámetros de solicitud inválidos."),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor.")
+            @ApiResponse(responseCode = "200", description = "Listado correcto."),
+            @ApiResponse(responseCode = "400", description = "Parámetros inválidos."),
+            @ApiResponse(responseCode = "500", description = "Error interno.")
     })
     @GetMapping(SUBJECT_LIST_BY_ORDER_CODE)
-    public Page<SubjectDetailsResponseDto> getAllSubjectByOrderCode(
+    public ResponseEntity<Page<SubjectDetailsResponseDto>> getAllSubjectsByCode(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "code") String sortBy,
             @RequestParam(defaultValue = "asc") String direction) {
 
         Pageable pageable = PageableUtil.createPageable(page, size, sortBy, direction);
-        return subjectService.getSubjectsByOrderCode(pageable);
+        Page<SubjectDetailsResponseDto> subjects = subjectService.getSubjectsByOrderCode(pageable);
+        return ResponseEntity.ok(subjects);
     }
 
-    @Operation(summary = "Buscar asignaturas por nombre",
-            description = "Devuelve una lista paginada de asignaturas filtradas por el nombre (coincidencia parcial).",
-            tags = {"Subjects"})
+    @Operation(summary = "Asignaturas del profesor autenticado",
+            description = "Devuelve las asignaturas que imparte el profesor en sesión.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Solicitud exitosa. Retorna las asignaturas encontradas."),
-            @ApiResponse(responseCode = "400", description = "Parámetros de búsqueda inválidos."),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor.")
+            @ApiResponse(responseCode = "200", description = "Listado correcto."),
+            @ApiResponse(responseCode = "401", description = "No autorizado."),
+            @ApiResponse(responseCode = "500", description = "Error interno.")
+    })
+    @GetMapping(SUBJECT_MY_TEACHER)
+    public ResponseEntity<List<SubjectDetailsResponseDto>> getSubjectsOfTeacher() {
+        List<SubjectDetailsResponseDto> subjects = subjectService.getSubjectsTheTeacher();
+        return ResponseEntity.ok(subjects);
+    }
+
+    @Operation(summary = "Asignaturas del estudiante autenticado",
+            description = "Devuelve las asignaturas inscritas por el estudiante en sesión.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Listado correcto."),
+            @ApiResponse(responseCode = "401", description = "No autorizado."),
+            @ApiResponse(responseCode = "500", description = "Error interno.")
+    })
+    @GetMapping(SUBJECT_MY_STUDENT)
+    public ResponseEntity<List<SubjectDetailsResponseDto>> getSubjectsOfStudent() {
+        List<SubjectDetailsResponseDto> subjects = subjectService.getSubjectsTheStudent();
+        return ResponseEntity.ok(subjects);
+    }
+
+    @Operation(summary = "Buscar subjects por nombre",
+            description = "Devuelve asignaturas paginadas según el nombre.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Listado correcto."),
+            @ApiResponse(responseCode = "400", description = "Parámetros inválidos."),
+            @ApiResponse(responseCode = "500", description = "Error interno.")
     })
     @GetMapping(SUBJECT_SEARCH_NAME + "/{name}")
     public ResponseEntity<Page<SubjectDetailsResponseDto>> searchSubjectsByName(
-            @PathVariable("name") String name,
+            @PathVariable String name,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "code") String sortBy,
@@ -100,34 +126,42 @@ public class SubjectController {
         return ResponseEntity.ok(subjects);
     }
 
-    @Operation(summary = "Obtener una asignatura por su código",
-            description = "Busca y devuelve una asignatura específica mediante su código.",
-            tags = {"Subjects"})
+    @Operation(summary = "Obtener subject por código",
+            description = "Busca y devuelve una asignatura específica por su código.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Asignatura encontrada. Devuelve los detalles de la asignatura."),
+            @ApiResponse(responseCode = "200", description = "Asignatura encontrada."),
             @ApiResponse(responseCode = "404", description = "Asignatura no encontrada."),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor.")
+            @ApiResponse(responseCode = "500", description = "Error interno.")
     })
     @GetMapping(SUBJECT_SEARCH_CODE + "/{code}")
-    public ResponseEntity<SubjectDetailsResponseDto> getSubjectByCode(@PathVariable Integer code) {
-        SubjectDetailsResponseDto subjectDetailsResponseDto = subjectService.findByCode(code);
-        return ResponseEntity.ok(subjectDetailsResponseDto);
+    public ResponseEntity<SubjectDetailsResponseDto> getSubjectByCode(
+            @PathVariable Integer code) {
+
+        SubjectDetailsResponseDto subject = subjectService.findByCode(code);
+        return ResponseEntity.ok(subject);
     }
 
-    @Operation(summary = "Actualizar el profesor asignado a una asignatura",
-            description = "Permite actualizar el profesor asignado a una asignatura específica mediante su código.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Actualización exitosa. El profesor ha sido asignado correctamente."),
+    @Operation(summary = "Actualizar profesor de subject",
+            description = "Actualiza el profesor asignado a la asignatura indicada.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Actualización exitosa."),
             @ApiResponse(responseCode = "404", description = "Asignatura o profesor no encontrados."),
-            @ApiResponse(responseCode = "402", description = "Requiere pago o permisos adicionales.")
+            @ApiResponse(responseCode = "403", description = "Sin permiso."),
+            @ApiResponse(responseCode = "500", description = "Error interno.")
     })
     @PutMapping(SUBJECT_UPDATE + "/{codeSubject}")
     public ResponseEntity<Void> updateTeacherInSubject(
-            @Parameter(description = "Código de la asignatura a actualizar") @PathVariable Integer codeSubject,
-            @Parameter(description = "Informacion a actualizar en caso que decida o solo profesor") @RequestBody UpdateSubjectRequest request) {
+            @PathVariable Integer codeSubject,
+            @RequestBody UpdateSubjectRequest request) {
 
         subjectService.updateSubjectByCodeTeacher(codeSubject, request);
-        return ResponseEntity.noContent().build(); // 204 No Content
+        return ResponseEntity.noContent().build();
     }
+}
 
-    }
+
+
+
+
+
+
