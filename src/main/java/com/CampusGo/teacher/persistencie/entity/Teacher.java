@@ -25,6 +25,7 @@ public class Teacher  extends BaseEntity {
     @JoinColumn(name = "id_user")
     private UserEntity user;
 
+
     @OneToMany(mappedBy = "teacher")
     private List<Subject> subjects;
 }

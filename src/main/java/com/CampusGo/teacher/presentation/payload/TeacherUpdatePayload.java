@@ -38,4 +38,8 @@ public class TeacherUpdatePayload {
 
     @NotBlank(message = "El código del profesor es obligatorio")
     private String teacherCode;
+
+   private String imageUrl;
+
+
 }

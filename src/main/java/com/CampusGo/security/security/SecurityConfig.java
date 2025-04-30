@@ -19,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import static com.CampusGo.commons.configs.api.routes.ApiRoutes.*;
 
@@ -30,8 +31,10 @@ public class SecurityConfig {
     private JwtUtils jwtUtils;
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationProvider authenticationProvider) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationProvider authenticationProvider, CorsConfigurationSource corsConfigurationSource) throws Exception {
         return httpSecurity
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
+
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(http -> {
@@ -48,20 +51,28 @@ public class SecurityConfig {
                             ,"/"
                     ).permitAll();
                     // EndPoints Privados
-
+// metodos comunes
+                    http
+                            .requestMatchers(HttpMethod.POST, USER_RECOVER_PASSWORD)
+                            .hasAnyRole("TEACHER", "STUDENT");
+                    http.requestMatchers(HttpMethod.PUT, USER_UPLOAD_IMAGE)
+                            .hasAnyRole("TEACHER", "STUDENT");
+                    http.requestMatchers(HttpMethod.PUT, USER_CHANGE_PASSWORD)
+                            .hasAnyRole("TEACHER", "STUDENT");
 // permisos de student
-      http.requestMatchers(HttpMethod.PUT, "/api/v1/campus-go/students/update").hasRole("STUDENT");
-      http.requestMatchers(HttpMethod.GET, "/api/v1/campus-go/students/me").hasRole("STUDENT");
-      http.requestMatchers(HttpMethod.PUT,STUDENT_CHANGE_PASSWORD ).hasRole("STUDENT");
+// permisos de student
+      http.requestMatchers(HttpMethod.PUT, STUDENT_UPDATE).hasRole("STUDENT");
+      http.requestMatchers(HttpMethod.GET, STUDENT_ME).hasRole("STUDENT");
+
 
       // permisos de student en scheluder
       http.requestMatchers(HttpMethod.GET,SCHELUDE_LIST_BY_STUDENT ).hasRole("STUDENT");
 
 
       // permiso de teeacher
-      http.requestMatchers(HttpMethod.PUT, "api/v1/campus-go/teachers/update").hasRole("TEACHER");
-      http.requestMatchers(HttpMethod.GET, "api/v1/campus-go/teachers/me").hasRole("TEACHER");
-      http.requestMatchers(HttpMethod.PUT,TEACHER_CHANGE_PASSWORD ).hasRole("TEACHER");
+      http.requestMatchers(HttpMethod.PUT, TEACHER_UPDATE).hasRole("TEACHER");
+
+      http.requestMatchers(HttpMethod.GET, TEACHER_ME).hasRole("TEACHER");
 
       // permisos de teacher en la clase Academic
       http.requestMatchers(HttpMethod.GET,ACADEMIC_LIST ).hasRole("TEACHER");

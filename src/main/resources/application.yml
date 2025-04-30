@@ -7,13 +7,12 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
-
     hikari:
+      maximum-pool-size: 10       # Número máximo de conexiones en el pool
+      minimum-idle: 2             # Conexiones mínimas ociosas
       max-lifetime: 30000         # 30 segundos, evita que Hikari use conexiones cerradas
       connection-timeout: 20000   # Tiempo máximo para obtener una conexión del pool
       validation-timeout: 5000    # Tiempo para validar la conexión
-      maximum-pool-size: 10       # Número máximo de conexiones en el pool
-      minimum-idle: 2             # Conexiones mínimas ociosas
       keepalive-time: 15000       # Hikari envía un "ping" cada 15s para mantenerlas activas
       connection-test-query: SELECT 1  # Verifica conexiones antes de usarlas
 
@@ -35,3 +34,11 @@ security:
       private: ${JWT_PRIVATE_KEY}
     user:
       generator: auth-service
+
+cloudinary:
+  cloud_name: ${CLOUDINARY_CLOUD_NAME}
+  api_key:    ${CLOUDINARY_API_KEY}
+  api_secret: ${CLOUDINARY_API_SECRET}
+  email:
+    sender:   ${EMAIL_SENDER}      # Usa variables de entorno para mayor seguridad
+    password: ${EMAIL_PASSWORD}    # No incluyas contraseñas directamente en el YAML

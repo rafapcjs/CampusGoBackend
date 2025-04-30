@@ -1,6 +1,8 @@
 package com.CampusGo.commons.configs.api.routes;
 
 
+import org.springframework.http.HttpMethod;
+
 public interface ApiRoutes {
     // 🌐 Ruta base de la API versionada
     String BASE_API = "/api/v1/campus-go";
@@ -12,16 +14,23 @@ public interface ApiRoutes {
 
     // 👤 Rutas para usuarios
     String USER_BASE = BASE_API + "/users";
+    String USER_RECOVER_PASSWORD= USER_BASE + "/recover-password";
+    String USER_CHANGE_PASSWORD = USER_BASE + "/change-password"; // 🔐 Cambiar contraseña profesor
+    String USER_UPLOAD_IMAGE = USER_BASE + "/uploadImage";
 
     // 🎓 Rutas para estudiantes
     String STUDENT_BASE = BASE_API + "/students";
+     String STUDENT_ME = STUDENT_BASE + "/me";
+    String STUDENT_UPDATE = STUDENT_BASE + "/update";
+
+
     String STUDENT_REGISTER = STUDENT_BASE + "/register";
-    String STUDENT_CHANGE_PASSWORD = STUDENT_BASE + "/change-password"; // 🔐 Cambiar contraseña estudiante
 
     // 👨‍🏫 Rutas para profesores
     String TEACHER_BASE = BASE_API + "/teachers";
+    String TEACHER_UPDATE = TEACHER_BASE + "/update";
+     String TEACHER_ME = TEACHER_BASE + "/me";
     String TEACHER_REGISTER = TEACHER_BASE + "/register";
-    String TEACHER_CHANGE_PASSWORD = TEACHER_BASE + "/change-password"; // 🔐 Cambiar contraseña profesor
 
     // 👨‍🏫 Rutas para periodos academicos
     String ACADEMIC_BASE = BASE_API + "/academic";

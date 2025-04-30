@@ -1,5 +1,6 @@
 package com.CampusGo.student.service.implementation;
 
+import com.CampusGo.commons.configs.utils.cloudinary.CloudinaryService;
 import com.CampusGo.commons.configs.error.exceptions.AccessDeniedException;
 import com.CampusGo.commons.configs.error.exceptions.ConflictException;
 import com.CampusGo.commons.configs.error.exceptions.ResourceNotFoundException;
@@ -25,7 +26,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Collections;
 
 @Service
@@ -36,6 +39,7 @@ public class StudentServiceImpl implements StudentService {
     private final StudentRepository studentRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CloudinaryService cloudinaryService;
     private final JwtUtils jwtUtils;
 
 
@@ -44,7 +48,7 @@ public class StudentServiceImpl implements StudentService {
     public AuthResponseDto registerStudent(StudentPayload payload) {
         // Validaciones para evitar duplicados
         if (userRepository.existsByUsername(payload.getUsername())) {
-            throw new ConflictException("El nombre de usuario ya existe");
+            throw new ConflictException("El nombre de usuario ya exist");
         }
 
 
@@ -162,42 +166,9 @@ public class StudentServiceImpl implements StudentService {
                 .name(user.getName())
                 .dni(user.getDni())
                 .phone(user.getPhone())
+                .imageUrl(user.getImageUrl())
                 .studentCode(student.getStudentCode())
                 .build();
     }
 
-    @Override
-    @Transactional
-    public void updatePasswordStudent(ChangePasswordPayload payload) {
-        // 1. Obtener el nombre de usuario autenticado
-        String currentUsername = SecurityUtils.getCurrentUsername();
-
-        // 2. Buscar el usuario por su nombre de usuario
-        UserEntity user = userRepository.findUserEntityByUsername(currentUsername)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado."));
-
-        // 3. Verificar si el usuario tiene perfil de estudiante
-        if (user.getStudent() == null) {
-            throw new AccessDeniedException("El usuario no tiene perfil de estudiante.");
-        }
-
-        // 4. Validar que la contraseña actual sea correcta
-        if (!passwordEncoder.matches(payload.getOldPassword(), user.getPassword())) {
-            throw new AccessDeniedException("La contraseña actual es incorrecta.");
-        }
-
-        // 5. Validar que la nueva contraseña y su confirmación coincidan
-        if (!payload.getNewPassword().equals(payload.getConfirmNewPassword())) {
-            throw new ConflictException("La nueva contraseña y su confirmación no coinciden.");
-        }
-
-        // 6. Verificar que la nueva contraseña no sea igual a la actual
-        if (passwordEncoder.matches(payload.getNewPassword(), user.getPassword())) {
-            throw new ConflictException("La nueva contraseña no puede ser igual a la actual.");
-        }
-
-        // 7. Codificar y actualizar la nueva contraseña
-        user.setPassword(passwordEncoder.encode(payload.getNewPassword()));
-        userRepository.save(user);
-    }
 }

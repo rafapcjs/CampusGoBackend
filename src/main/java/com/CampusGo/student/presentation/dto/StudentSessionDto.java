@@ -10,5 +10,6 @@ public record StudentSessionDto (
         String dni,
         String email,
         String phone,
-        String studentCode
+        String studentCode,
+        String imageUrl
 ) {}

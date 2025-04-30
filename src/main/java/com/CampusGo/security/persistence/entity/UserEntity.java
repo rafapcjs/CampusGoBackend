@@ -46,6 +46,9 @@ public class UserEntity  extends BaseEntity {
     @Column(name = "credential_No_Expired")
     private boolean credentialNoExpired;
 
+    @Column(name = "logo_url")
+    private String imageUrl;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<RoleEntity> roles = new HashSet<>();
