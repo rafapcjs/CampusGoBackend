@@ -42,6 +42,9 @@ public class SecurityConfig {
                  http.requestMatchers(HttpMethod.POST,LOGIN).permitAll();
                  http.requestMatchers(HttpMethod.POST, TEACHER_REGISTER).permitAll();
                  http.requestMatchers(HttpMethod.POST,STUDENT_REGISTER).permitAll();
+                    http
+                            .requestMatchers(HttpMethod.POST, USER_RECOVER_PASSWORD)
+                            .permitAll();
                     http.requestMatchers(
                             "/swagger-ui/**",
                             "/swagger-ui.html",
@@ -52,9 +55,7 @@ public class SecurityConfig {
                     ).permitAll();
                     // EndPoints Privados
 // metodos comunes
-                    http
-                            .requestMatchers(HttpMethod.POST, USER_RECOVER_PASSWORD)
-                            .hasAnyRole("TEACHER", "STUDENT");
+
                     http.requestMatchers(HttpMethod.PUT, USER_UPLOAD_IMAGE)
                             .hasAnyRole("TEACHER", "STUDENT");
                     http.requestMatchers(HttpMethod.PUT, USER_CHANGE_PASSWORD)
